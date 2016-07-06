@@ -1,0 +1,268 @@
+################ UPGRADE
+
+NOTE: Upgrading from 2.0.1 to 2.0.2 is in the middle section
+NOTE: Upgrading from 1.1.12-3 to 2.0.1 is at the bottom
+
+########## UPGRADING FROM 2.0.2 TO 2.0.3 ##########
+
+1. install new files:
+	perl ./install.pl
+	NOTES: If you have customized any scripts in the bin or agi folders, 
+	then make sure you back them up before running the install.pl script. 
+	This script will replace existing files in the astguiclient installation.
+
+2. upgrade the MySQL asterisk database:
+	mysql
+	use asterisk
+	\. /path/from/root/extras/upgrade_2.0.3.sql
+	quit
+
+3. The server_stats.php has been merged into the vicidial/admin.php page
+
+4. Width of the admin.php screen, and the color and size of the headers are all
+	now definable by variables at top of the admin.php script.
+
+5. Dial Override checkbox added to the campaign modification screen of admin.php
+	to force manual dial_level changes in ADAPT dialing modes.
+
+6. Behaviour of HotKeys in manual dial mode has changed to automatically go on 
+	to the next lead when a HotKey is pressed.
+
+7. It is now possible for agents to dial alternate phone numbers using only
+	HotKeys if ALTPH2 and/or ADDR3 are added to a campaign's hotkeys.
+
+8. You can now use BLEND/INBND/*_C/*_B/*_I to define a campaign a a CLOSER 
+	campaign capable of taking inbound calls.
+
+9. In Auto-dialing campaigns(RATIO and ADAPT) you can now configure the dialer 
+	to dial up to two alternate numbers per lead automatically, as well as 
+	defining the statuses that you want to do this for. More info about
+	this feature in the ALTERNATE_NUMBER_DIALING.txt doc.
+
+10. Added ability to send multiple concurrent transfers at once to agents in 
+	outbound campaigns. This will greatly benefit larger VICIDIAL 
+	installations by decreasing the time it takes for a call to get	to an 
+	agent once answered after a large queue backup. This is defaulted to 
+	AUTO, but can be forced to a set number. This is the Concurrent 
+	Transfers option in the Campaign Modification page.
+
+11. New optimized code for AST_manager_send.pl and AST_send_action_child.pl. 
+	Thanks to Lott Caskey for the code contribution
+
+12. The field user_group has been added to several log tables to allow for 
+	better tracking of stats by user groups. Several reports now offer 
+	user group display options.
+
+13. VERY IMPORTANT!!! Make sure the php.ini setting for memory_limit is set to 
+	a minimum of 12M, we recommend 48M:
+		memory_limit = 48M
+	Some of the scripts have grown in size and need more memory to run
+	properly on some systems.
+
+14. Added ability to control access to each admin section by vicidial_users.
+	This includes a view_reports settings to restrict access to all of the
+	reports scripts.
+
+15. Added Agent Pause Codes that are definable per campaign and allows the
+	agent to select what they are doing when they are in pause time.
+
+16. Added optional Asterisk-compatible queue_log logging for QueueMetrics
+	compatibility. See the QUEUEMETRICS.txt doc for more information
+
+17. RECOMMENDATION - If you are calling in the USA, you should add the 
+	"--postal-code-gmt" flag to your adjust GMT script in the crontab to
+	more accurately assign timezones to your leads.
+
+18. Changed dial statuses to use dynamic number of dial statuses instead of
+	static dial_status_x fields.
+
+19. Added Mute/UnMute ability to vicidial.php agent screen. To use, you must
+	have the _X18600XXX and _X28600XXX entries in your extensions.conf
+
+20. Added basic sipsak display on compatible SIP devices for VICIDIAL activity.
+
+21. Tested with Asterisk 1.2.16 and 1.2.17, new patch for meetme volume controls
+	for those two versions, see SCRATCH_INSTALL for more info.
+
+22. Added HOME link to the admin web page that goes to a configurable web address.
+
+
+
+
+
+
+########## UPGRADING FROM 2.0.1 TO 2.0.2 ##########
+
+1. install new files:
+	perl ./install.pl
+	NOTES: If you have customized any scripts in the bin or agi folders, 
+	then make sure you back them up before running the install.pl script. 
+	This script will replace existing files in the astguiclient installation.
+
+	/etc/astguiclient.conf has new variables for new functionality including:
+	- new ADMIN_keepalive_ALL process settings
+	- FastAGI_log server settings
+	and comments are added to the astguiclient.conf file
+
+2. upgrade the MySQL asterisk database:
+	mysql
+	use asterisk
+	\. /path/from/root/extras/upgrade_2.0.2.sql
+	quit
+	/usr/share/astguiclient/ADMIN_area_code_populate.pl
+		The Daylight Savings Time scheme for the USA and Canada has been
+		updated for the 2007 changes. Also, Brazil DST has been added.
+		Another addition on this topic is the addition of USA zipcode
+		GMT offset list that allows for more accurate timezone lookups.
+
+3. The astguiclient web directory has been removed and the 
+	astguiclient/admin.php functions have been merged into the 
+	vicidial/admin.php page
+
+4. You can now define trunks for use only by specific campaigns. See the help
+	in the vicidial/admin.php server modification page under the 
+	VICIDIAL SERVER TRUNKS section.
+
+5. Agents now have the ability to control volume levels for any call in their 
+	meetme room directly from the vicidial.php page. This only works on 
+	Asterisk 1.2.7.1, 1.2.12.1, 1.2.13 or SVN_1.2 and the meetmeadmin_volume_control.patch
+	patch must be applied as described in the SCRATCH_INSTALL. Also, a few 
+	lines must be added to the extensions.conf for this to work:
+	(_X48600XXX, _X38600XXX, 8300 [see docs/conf_examples/extensions.conf.sample])
+
+6. Multiple ADMIN_keepalive scripts have been replaced with a single script
+	ADMIN_keepalive_ALL.pl
+	Remove all other ADMIN keepalive entries in your crontab and replace
+	with this one:
+	### keepalive script for astguiclient processes
+	* * * * * /usr/share/astguiclient/ADMIN_keepalive_ALL.pl
+
+	NOTE: the scripts to be kept alive are to be defined in the astguiclient.conf file
+
+7. FastAGI replacement for call_log and VD_hangup AGI scripts:
+	FastAGI_log.pl - requires cpan module Net::Server to run
+	If you want to use it, read the comments at the top of the script
+	Look at the docs/conf_examples/extensions.conf.sample file for examples
+	of how to use this new feature in your dialplan
+	- cpan
+	- install Net::Server
+
+8. Fix for unregistered SIP trunks (thanks to Chris Doyle):
+	look at the bottom of the docs/conf_examples/extensions.conf.sample
+	file for examples of what to put in your extensions.conf file to get
+	VICIDIAL auto dialing to work with non-registered SIP trunks. remember 
+	to put sip-silence.gsm in your /var/lib/asterisk/sounds/ directory.
+
+9. Added new campaign summary screen and reformatted the timeonVDADall report:
+	A summary screen with all of the call information for every active 
+	campaign for the day. reformatted campaign Realtime report with new
+	colors and other display options.
+
+10. Added new script to change the server_ip entries when a machine changes IPs
+	The ADMIN_update_server_ip.pl script can be used to update your server's
+	IP address within all vicidial database tables and config files from
+	this one script. This can even be run in the crontab if you are on
+	a DHCP service and need to modify your IP address often
+
+11. Added new script to allow for dial-out-only(no agents on the server) 
+	VICIDIAL servers as well as balance dialing where a server with 
+	available trunk lines can dial lines for another server that does not
+	have enough lines to dial for it's dial_level. AST_VDauto_dial_FILL.pl
+	script is only for multi-server systems and is started from new 
+	ADMIN_keepalive_ALL.pl script with option 7 in astguiclient.conf
+
+12. Added the ability to restrict agent logins by user group to a specific set
+	of campaigns. This is definable in the USER GROUPS section of admin.php.
+	You must make sure that your admin login is in a user group and that
+	the selected user group has the allowable campaigns set to ALL
+	CAMPAIGNS to be able to view and modify all campaigns in the system.
+
+13. Added lead_id and user fields to the recording_log, along with cross-
+	reference links in several admin web pages for these.
+
+14. Changed Drop percentage to be out of Answered calls for FTC compliance.
+
+15. Tested new asterisk-perl module (0.09) and found that it is NOT compatible.
+	Please make sure you use asterisk-perl-0.08 ONLY.
+
+
+
+
+
+########## UPGRADING FROM 1.1.12-3 TO 2.0.1 ##########
+
+If you are upgrading to the 2.0 code tree from the 1.1.12-3 release there have 
+been several changes made to the code base and to where some files are stored in
+the release as well as on your machine.
+
+1. upgrade the MySQL Asterisk database:
+	mysql
+	use asterisk
+	\. /path/from/root/extras/upgrade_2.0.1.sql
+	quit
+
+
+2. use the new installer for astguiclient-VICIDIAL files:
+	NOTE: this new script is interactive with prompts. this script will
+	create the new /etc/astguiclient.conf settings file that replaces the
+	old AST_SERVER_conf.pl file that has been removed. Also, this settings
+	file is used by dbconnect.php scripts so no need to manually edit them
+
+	perl install.pl
+
+
+3. Make sure you have MySQL clientlibs installed:
+Because all perl script now use DBI instead of Net::MySQL you need to make sure 
+that you have at least the MySQL client installed on all VICIDIAL servers even 
+if the MySQL server is installed on another machine. You can skip this step if 
+MySQL server is already on your VICIDIAL server:
+  Go to http://www.mysql.com/ and download the mysql package
+   - to install this directly on the command line type:
+	- cd /usr/local
+	- wget http://mirror.trouble-free.net/mysql_mirror/Downloads/MySQL-4.0/mysql-4.0.27.tar.gz
+	- gunzip mysql-4.0.27.tar.gz
+	- tar xvf mysql-4.0.27.tar
+	- cd mysql-4.0.27
+	- groupadd mysql
+	- useradd -g mysql mysql
+	- "./configure --prefix=/usr/local/mysql --without-server --enable-shared=yes --with-readline"
+	- make
+	- make install
+   - you are done
+
+
+4. New MySQL perl modules:
+You will need to make sure that you have installed the following perl modules:
+DBI (top-level Database interface module "install DBI")
+DBD::mysql (MySQL-specific interface through DBI "force install DBD::mysql")
+
+
+5. new predictive dialing crontab entry:
+If you will be using the new predictive dialing functions you need to make sure 
+you have the keepalive for this function loaded in your crontab:
+NOTE: this only needs to be on a single server if you are in a multiple 
+VICIDIAL server setup.
+### keepalive script for VICIDIAL predictive script
+* * * * * /usr/share/astguiclient/ADMIN_keepalive_AST_VDadapt.pl
+
+
+6. all old crontab entries and /home/cron files 
+All of your old crontab entries need to be changed from /home/cron to
+/usr/share/astguiclient if you choose the default installation path. You can
+manually set the path to /home/cron if you like though since the home path is
+now dynamic in all vicidial perl(.pl) scripts. If you do choose to use the new
+default path, you can delete everything in the /home/cron directory if you like
+
+
+7. old /etc/rc.d/rc.local entries
+Be sure to change your /etc/rc.d/rc.local entries(the commands that are run at
+system boot to start asterisk and other scripts like log rolling) and change the
+/home/cron path to the new /usr/share/astguiclient path.
+
+
+8. other notes:
+- there is a new DIAL METHOD field and several other new dial-control fields 
+in campaign modification page, please take a minute to read the help 
+documentation for these new features.
+
+
