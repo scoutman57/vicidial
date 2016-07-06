@@ -1,0 +1,137 @@
++------------------------------------------------------------------------------+
+|                          Asterisk GUI client - TODO           v.1.1.10       |
+|                                                                              |
+| TODO file is a list of what is new from previous version as well a list of   |
+| features that are planned to be completed for future releases. HIGH priority |
+| items are usually going to be completed for the next release. This file is   |
+| kept updated on the project website by the developers and does not           |
+| necessarily reflect the status of features for the last release. If you are  |
+| reading this file from the release package, then it is accurate for the      |
+| version your downloaded.                                                     |
++------------------------------------------------------------------------------+
+
+-	DONE	Fix error in hour variable in AST_VDauto_dial.pl script
+
+-	DONE	Fix scripts to work around Asterisk 1.2 tree behaviour on VICIDIAL calls that will jump right to the 'h' exten without allowing the inbound and outbound calls to finish up their DROP updates. Fix entails adding a 'exten => h,2,DeadAGI(VD_hangup.agi)' to the extensions.conf. This script looks for the call's uniqueID in the vicidial_log and updates that record and the vicidial_closer_log, vicidial_list tables with the proper time as well as status, and deletes record from the vicidial_auto_calls table.
+
+-	DONE	fix reset of lead hopper in vicidial/admin.php
+
+-	DONE	add app_amd answering machine detections instructions with possibly special VD_amd_pickup.sgi script to note a pickup before the app_amd code runs. This will require the 1.2 Asterisk tree, altering of source files and recompiling of Asterisk to run. will run under another exten => 8369
+
+-	DONE	add ability to send AMD detected calls to an extension for a voicemail message. Already have the am_message_exten fields for this, we just need a Y/N field to define whether to send AMs to that extension to verify, it will default to no.
+
+-	DONE	add transfer-conf macro links per campaign for number-to-dial and send-dtmf fields. We will add two small links to be placed somewhere on the TRANSFER-CONF frame. These two buttons will have associated fields in the vicidial_campaigns and vicidial_inbound_groups tables and will contain a DTMF field and a NUMBER fields each for pre-populating the Number to dial and Send DTMF fields by the click of the link.
+
+-	DONE	formalize GPLv2 License and copyright notices on all scripts
+
+-	DONE	package up the sphinx dispo audio analysis scripts in the sphinxNA folder and write some instructions on how to setup your system to record ring-time and sort/filter it after-hours and analyze it for dispositions with sphinx
+
+-	DONE	add another vicidial_users Y/N field for hotkeys activation, this would replace the current requirement of a user_level >= 5 for Hotkeys activation on vicidial.php.
+
+-	DONE	add permission for altering lead information from the admin.php lead search page. This means a new vicidial_users Y/N field. This removes the default over/ride user/pass for this feature
+
+-	DONE	add another next_agent_call option of user_level. This would send calls first to the highest ranking available agents. This will require altering the vicidial_campaigns table as well as the vicidial_live_agents table and the vicidial.php code tree.
+
+-	DONE	add ability to restrict CLOSER/INBOUND campaign users from choosing their own in-groups and give the ability to the manager to set them. This means adding a new Y/N field to vicidial_users, adding a new closer_campaigns field to vicidial_users and adding a new selection system in the edit users screen for selecting in-groups for an agent(much like how it is done for remote agents)
+
+-	DONE	add manager ability to change agent campaign while they are logged in. We will add a new user_status.php page to facilitate this, it will be a new vicidial_users field that the manager must be enabled for in order to switch campaigns of live agents. This new user_status page will also allow the force logout of agents which will delete their vicidial_live_agents record in the system.
+
+-	DONE	Add small link to dispo screen that will allow minimizing the dispo screen so that the agent can see the customer info behind it.
+
+-	DONE	First stage Scheduled-Callback functionality: add callback status with date and time definition to VICIDIAL. This first stage will just allow setting of date/time for callbacks that will be called back by anyone, not a specific agent. The initial contact agent will select CALLBK as the status and a frame will pop up with a calendar starting at today and going by month upto 12 months in the future. They will click on a day and also be able to set the hour and half hour, and the lead will be saved as a status CBHOLD so it cannot be called. Once the time set is reached, the callback is changed to a status CALLBK and it will be available to be called if the CALLBK status is selected in the campaign screen.
+
+-	DONE	Add interface for viewing (by user/list/campaign) and modifying Callback on-hold entries, CBHOLD status, in the admin page as well as lead modification page.
+
+-	DONE	Added phone_favorites table into the create-database script. major omission from 1.1.9 release.
+
+-	DONE	Added AST_agent_time_sheet.php for summary of logged-in-to-vicidial time for agents
+
+-	DONE	Change callbacks to set to called_since_last_reset=N when they go from CBHOLD to CALLBK in VDhopper.pl script
+
+-	DONE	Change "Congestion" in the dialplan samples in SCRATCH_INSTALL to "Hangup". This needs to be done because of an annoying change in Asterisk 1.2 that does not always hang up Congested calls.
+
+-	DONE	Add gmt_offset_now to vicidial_hopper and method in the VDhopper.pl script to remove entries not within the range to improve time compliance.
+
+-	DONE	Change the default for recording filenames to include the CUSTPHONE
+
+-	DONE	Write an auto-dial reminder AGI script(agi-VDADautoREMINDER.agi) that will play a message and offer the options of leaving a voicemail in the voicemail box specified in the vicidial_list.security_phrase field or changing the status to CALLBK so that the customer can be called back by an agent. This script will not send any live calls to agents and is best run through a remote_agent. Statuses: N- Call was picked up, didn't finish initial message/ MP- Initial message was played/	VM- call was sent to voicemail/ CALLBK- customer selected to be called back
+
+-	DONE	Alter VD_hangup.agi to preserve vicidial_log.status and vicidial_list.status if the status has been set to something other than default start values(XFER/QUEUE/NEW/NA)
+
+-	DONE	Change call_log.agi and call_logCID.agi to fix the tracking custom-callerid bug.
+
+-	DONE	Fix VD_amd.agi vicidial_log query problems to not overwrite previous status
+
+-	DONE	Fix bug in vicidial that would send every "leave 3way call" conversation to the same conference.
+
+-	DONE	Add notes on multi-server VICIDIAL to LOAD_BALANCING.txt along with cron jobs that only need to be on one of the VICIDIAL servers
+
+
+
+
+-	HIGH	Second stage Scheduled-Callback functionality: add agent-specific callback status with date and time definition to VICIDIAL. This second stage will allow a callback to be restricted to the specific agent that set the callback. There will also be an admin interface necessary to be able to override this as well as a callback interface on the vicidial.php page so an agent can look over their callbacks and place them when the time arises. There will need to be some other provisions in place on the vicidial.php to handle what are basically manual dial calls happening on an auto-dial session, I haven't quite figured out how to accomplish this at this time.
+
+-	HIGH	end-user agent documentation - manual. Probably a free text-only manual and a full color print book available for sale
+
+
+
+
+-	MEDIUM	add a new script for using SoX to analyze the first 5 seconds of a ring-time recording within 15 minutes of the NA call ending and detecting if it has the SIT tone at the beginning of it so the lead can be taken out of the list as a DC
+
+-	MEDIUM	add skills-based routing to give the ability for a manager to set an agent at a higher or lower level per campaign or in-group. Defaults to level 0 possible values will be -9 through 9
+
+-	MEDIUM	add all possible fields to the script auto-populate like in-group for inbound/closer, campaign and others
+
+-	MEDIUM	add ability to specify list_id in lead loader at time of picking fields
+
+-	MEDIUM	add ability upon vicidial.php login to take a number to dial as a password and a reserved word(something like MANUAL in all caps) that would allow the use of an EXTERNAL phone without setting it up as a aasterisk.phones entry.
+
+-	MEDIUM	per-campaign customer SQL query selections, like city and phone prefixes
+
+-	MEDIUM	rebuild the vdremote.php remote agents pages to use AJAX(PHP/Javascript/XMLHTTPRequest) for real-time popups of call data.
+
+-	MEDIUM	allow custom welcome message for vicidial campaigns.
+
+-	MEDIUM	change local_call_time to allow for variable time ranges instead of the presets that are available in the current version
+
+-	MEDIUM	create a cron script and method for creating new extensions in the sip.conf/iax.conf files as well as dialplan entries(extensions.conf). This will require more fields in the phones table to account for variables available to the protocols. The conf files would need to be altered before to have a flag for the beginning and ending of the auto-generated content. This would also necessitate a TEXT area for the extensions.conf content(that would be default generated but could be manually altered). The cron script would be run every 5 minutes or so to see if any phones had altered content, and if so generate new auto-content and do a 'reload' on the asterisk server to activate the new content.
+
+-	MEDIUM	add a count-up-timer to active channels on the astguiclient MAIN screen(this may be an Asterisk 1.2+ required feature).
+
+-	MEDIUM	Change VICIDIAL autodialing configuration to allow dialing of alt_phone numbers as well as address3 phone numbers after dialing main number. This is already possible in manual dialing mode. Best way for this may be to reconfigure the called_since_last_reset field to allow N, 1, 2, Y. This would require reprogramming several server scripts and php pages.
+
+-	MEDIUM	Allow manual dialing of an alt_phone or address3 phone number in vicidial.php in auto_dial mode. This requires a lot of changes to the code where dial_level>0 for things to work correctly, but should be possible.
+
+-	MEDIUM	Try a few of the frequently launched scripts as C programs(call_log.agi and the AST_send child scripts) to see if they reduce system load and/or speed up those processes.
+
+-	MEDIUM	Change the autodialing system around so that there can be dialing-out-only servers and agent-only servers. This is suprisingly simple to do, but would require all servers to be controlled by a single instance of AST_VDauto_dial.pl running on one machine.
+
+-	MEDIUM	Add method of picking up astGUIclient parked calls by only dialing digits on a regular extension without using the astGUIclient.
+
+-	MEDIUM	room manager documentation - manual. Probably a free text-only manual and a full color print book available for sale
+
+-	MEDIUM	admin/installer/maintainer documentation as well as troubleshooting guide
+
+-	MEDIUM	Run some lab-style load tests on VICIDIAL and show recommended configurations as well as "highest recommended" settings
+
+-	MEDIUM	add Answering machine detection ability. This may involve some code changes to Asterisk but with the addition of some new subroutines to the dsp.c file it may be possible to develop some equations to detect answering machines without significantly effecting processor load. We figured out that for outbound campaigns it seems that putting a dial_timeout of between 24-30 seconds seems to remove upto 95% of the answering machines from being transferred to agents with no additional delay in answered calls being sent to agenst, which seems much preferrable to many answering machine detection methods out there. Also, adding documentation to show how to setup BackGroundDetect, NVFaxDetect and app_amd for call-answer-screening.
+
+
+
+-	LOW	add the ability to run separate companies on the same VICIDIAL server. This will not be easy. All admin tasks as well asl user tasks and stats will need to have divisions so that nothing is accessible from the other groups. Also, the resources of the system(outbound trunks, hard drive space, other shared elements, etc...) so that one group cannot hog the shared resources of the the server.
+
+-	LOW	We are also looking at adding a separate operator-specific GUI app to allow for better extension monitoring and transferring options that operators require. the web agc client is close to this goal.
+
+-	LOW	We are also looking at creating an inbound-agent-specific GUI that would ideally work with Asterisk queues but that is not very likely given the current lack of events being given off by queues(this is much less likely to be built now that VICIDIAL takes inbound calls)
+
+-	LOW	Making the server install script a customizable with installer prompts
+
+-	LOW	clean up the GUI LEADLOADER code a bit and fix the running processing totals. Soon to be depricated, because of use of admin web page for loading leads
+
+-	LOW	Create guidelines and suggestions for deactivating unused modules from Asterisk for astGUIclient users
+
+-	LOW	Revisit possibility of using something other than CallerIDname to tag a call process, probably a long shot without altering the Asterisk code, but that may be an option.
+
+-	ON-HOLD	add a way of checking that there is no more than 1 channel in the meetme room with the agent before another call to that agent. Currently this happens less than 0.1% of the time(mostly on heavily loaded systems), but another check might change that to zero.
+
+-	ON-HOLD	Localization of each server based on Intl. dial codes and/or country codes. very difficult to do this based on dial-codes, if used in other country, best to not use the adjust_gmt script.
