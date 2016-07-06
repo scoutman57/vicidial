@@ -1,0 +1,82 @@
+Here is what you need to add to your Asterisk configuration by configuration filename:
+
+Notes:
+- You do NOT have to have MusicOnHold enabled or mpg123 installed to use this
+- it is assumed in the client app code that you need to dial a "9" to get an outside line
+- Parking is really just sending a call to a a Playback file then doing a redirect to an extension
+
+---------------------------
+extensions.conf
+---------------------------
+
+; park channel for client GUI parking, hangup after 30 minutes
+;    create a GSM formatted audio file named "park.gsm" that is 30 minutes long
+;    and put it in /var/lib/asterisk/sounds
+exten => 8301,1,Answer
+exten => 8301,2,Playback(park)
+exten => 8301,3,Hangup
+
+
+; park channel for client GUI conferencing, hangup after 30 minutes
+;    create a GSM formatted audio file named "conf.gsm" that is 30 minutes long
+;    and put it in /var/lib/asterisk/sounds
+exten => 8302,1,Answer
+exten => 8302,2,Playback(conf)
+exten => 8302,3,Hangup
+
+
+; Asterisk internal ZapBarge extensions 
+;   they are long so no one dials them accidentally
+exten => 8612001,1,ZapBarge(1)
+exten => 8612002,1,ZapBarge(2)
+exten => 8612003,1,ZapBarge(3)
+exten => 8612004,1,ZapBarge(4)
+exten => 8612005,1,ZapBarge(5)
+exten => 8612006,1,ZapBarge(6)
+exten => 8612007,1,ZapBarge(7)
+exten => 8612008,1,ZapBarge(8)
+exten => 8612009,1,ZapBarge(9)
+exten => 8612010,1,ZapBarge(10)
+...
+
+
+; Asterisk internal conference calling meetme extensions
+;   they are long so no one dials them accidentally
+;   don't forget to populate the conferences table in the "asterisk" DB with
+;   these extensions or conferencing won't work:
+;     INSERT INTO conferences values('8600011','10.10.11.12',''); and so on...
+exten => 8600011,1,Meetme,8600011|q
+exten => 8600012,1,Meetme,8600012|q
+exten => 8600013,1,Meetme,8600013|q
+exten => 8600014,1,Meetme,8600014|q
+exten => 8600015,1,Meetme,8600015|q
+exten => 8600016,1,Meetme,8600016|q
+exten => 8600017,1,Meetme,8600017|q
+exten => 8600018,1,Meetme,8600018|q
+exten => 8600019,1,Meetme,8600019|q
+exten => 8600020,1,Meetme,8600020|q
+exten => 8600021,1,Meetme,8600021|q
+exten => 8600022,1,Meetme,8600022|q
+exten => 8600023,1,Meetme,8600023|q
+exten => 8600024,1,Meetme,8600024|q
+exten => 8600025,1,Meetme,8600025|q
+exten => 8600026,1,Meetme,8600026|q
+exten => 8600027,1,Meetme,8600027|q
+exten => 8600028,1,Meetme,8600028|q
+exten => 8600029,1,Meetme,8600029|q
+exten => 8600030,1,Meetme,8600030|q
+
+
+
+#### for optional call logging through AGI add the following line to all incoming and outgoing extensions:
+
+;outbound dialing:
+exten => _91NXXNXXXXXX,1,AGI(call_log.agi,${EXTEN})
+
+;inbound calls:
+exten => 101,1,AGI(call_log.agi,${EXTEN})
+
+;all hangups:
+exten => h,1,AGI(call_log.agi,${EXTEN})
+
+
