@@ -1,0 +1,144 @@
++------------------------------------------------------------------------------+
+|                          Asterisk GUI client - TODO           v.1.1.9        |
+|                                                                              |
+| TODO file is a list of what is new from previous version as well a list of   |
+| features that are planned to be completed for future releases. HIGH priority |
+| items are usually going to be completed for the next release. This file is   |
+| kept updated on the project website by the developers and does not           |
+| necessarily reflect the status of features for the last release. If you are  |
+| reading this file from the release package, then it is accurate for the      |
+| version your downloaded.                                                     |
++------------------------------------------------------------------------------+
+
+-	DONE	Fix vicidial_agent_log to log the lead_id on a manual dial call that has been hungup before connecting(like disconnects, busys and ring-no-answers)
+
+-	DONE	Fix manual dial Blind Xfer functionality
+
+-	DONE	add a listing for the project to Freshmeat.net to increase profile and generate more traffic, we are GPL and run on Linux after all.
+
+-	DONE	Move the MainTransfer DIV in vicidial.php to a floating span to preserve the viewability on 800x600 screens
+
+-	DONE	allow a code change to make the comments box in vicidial.php a textarea field allowing multi-line input(would still be 255 char limit) The variable is $multi_line_comments in the vicidial.php code. Change to 1 for multi-line comments, leave at 0 for single line comments
+
+-	DONE	Remove the htglobalize file from the agc directory because it is unnecessary and slows everything down. Also optimize some of the frequently called while loops and echo statements to work faster
+
+-	DONE	add variable to set soxmix path-to-root in CRON mixing scripts. Or maybe check to see where soxmix is by trial-and-error file exists -e test in perl
+
+-	DONE	check and add Greek translations of the admin pages to the distribution.
+
+-	DONE	Fix vdc_db_query.php logout function to properly remove vicidial_conferences reservations upon logout of the session(inproper variable used)
+
+-	DONE	alter vicidial and astguiclient admin.php scripts to allow functioning without register_globals=on for security reasons. Also test with PHP 5.X tree for compatibility reasons
+
+-	DONE	Create a load-balancing call-distribution AGI script to distribute calls across agents logged into multiple servers on the same campaign. This is running wonderfully on 4 servers right now and has increased our efficiency by upto 20%.
+
+-	DONE	Create a time on VDAD php real-time script that shows all agent activity on a campaign across all servers in the setup. Also, include summary numbers at the top of the page for quick overview. AST_timeonVDADall.php
+
+-	DONE	Add way of deleting users and campaigns/lists/ingroups/user-groups/etc. Must contain secondary confirmation to execute the deletion. Add new boolean switches on the vicidial_user modification page modifiable only by ADMINs with level 9. These switches would allow things like deleting users/campaigns/lists/etc as well as loading leads and potentially other things in the future.
+
+-	DONE	change vicidial/admin.php to allow ADMIN users to only add or alter user_levels of other users to their level or lower. Also, only users with level 9 can edit users of their own user level.
+
+-	DONE	Add default phone_login/phone_pass to vicidial_users. If it's filled in, it would populate those default values upon login to vicidial.php not requiring any manual entry of phone values. Also, add a trigger variable in the vicidial.php code to turn this feature on and off.
+
+-	DONE	Allow logging into astguiclient admin with a vicidial_users user/pass. utilizing the ast_admin_access value
+
+-	DONE	Add ability to delete phones in the astguiclient admin page if the permission is set in the vicidial_users table
+
+-	DONE	Add blind monitoring extensions(68600XXX) to SCRATCH_INSTALL.
+
+-	DONE	Add agent 'script' screen tab for VICIDIAL. This also requires adding an extra HELP set of instructions to guide managers in entering the script correctly. When the call comes up, the screen could be configured in the campaign admin to go to the Script layer automatically when a customer connects with variables filled in with Database values and allow toggling back and forth to the dialer screen. Scripts will be a separate section of the VICIDIAL admin page and you will be able to define scripts per campaign and across campaigns. Also, needs to work for inbound groups and closer campaigns.
+
+-	DONE	Add ability to auto-popup the web form when a call gets to an agent. Also, have an option for auto-popup of the SCRIPT tab.
+
+-	DONE	Add Answering machine message button for agent to click on to leave message on call after the machine beep. Call will be transferred to an exten that you would need to setup in the extensions.conf to play a message and then Hangup. Needs another vicidial_campaigns value that the client will grab upon login
+
+-	DONE	Fix bug in admin.php where default values are not populated when new campaign/other record are created.
+
+-	DONE	Add a LOGOUT ALL AGENTS IN THIS CAMPAIGN button to the campaign-admin section
+
+-	DONE	Add new LOAD_BALANCING.txt file to the docs to help with setup of multi-server setups.
+
+-	DONE	Fix listen script crash due to parens() separated in the output.
+
+-	DONE	Fix bug on ADMIN_keepalive_AST_update.pl on line 87 it should be "@psoutput2"
+
+-	DONE	alter web_form_address code to allow for default-user-entered variables in the field. vicidial.php alteration necessary to detect vars in the field and format accordingly
+
+-	DONE	Fix variable mixup in vicidial admin causing problems with vicidial campaign hotkeys
+
+-	DONE	report bug and post a patch to bugs.digium.com about CLI "show channels concise" output delimiter colon ":" this is a problem because SIP and IAX channels can have a colon in them for the port or password of a channel causing offset of the following fields in the output. I have been meaning to do this for several months, just never got around to it. Also, need to update the AST_update.pl code to allow for "!" delimited output from 1.2 builds. Here's the address of the bug(6086): http://bugs.digium.com/view.php?id=6086
+
+-	DONE	Add favorites extensions list to astGUIclient web client that would allow users to select favorite extensions on their server and view their state(busy=red/available=green) on a side frame and allow dialing them by clicking on them. A simple interface is also needed within astguiclient.php for the end-user to be able to add/delete/reorder favorite extensions within the list.
+
+-	DONE	Add instructions to SCRATCH_INSTALL on creating a bookmark for vicidial agent stations to default to a specific phone for streamlined login procedures. Add note for turning off Firefox remember-form-values feature.
+
+-	DONE	Add new advanced lead loader with Excel import and CSV capabilities, potentially a field chooser as well.
+
+-	DONE	Update the install script to include new scripts and directories
+
+-	DONE	Allow toggeling of the transfer-conference frame in vicidial.php
+
+-	DONE	Fixed agi-VDADtransfer error in Asterisk 1.2 tree when custom campaign callerid is specified.
+
+
+
+
+
+
+-	MEDIUM	add permission for altering lead information from the admin.php lead search page. This means a new vicidial_users Y/N field.
+
+-	MEDIUM	add another vicidial_users Y/N field for hotkeys activation, this would replace the current requirement of a user_level > 4 for Hotkeys activation.
+
+-	MEDIUM	add another next_agent_call option of user_level. This would send calls first to the highest ranking available agents. This will require altering the vicidial_campaigns table as well as the vicidial_live_agents table and the vicidial.php code tree.
+
+-	MEDIUM	add ability upon vicidial.php login to take a number to dial as a password and a reserved word(something like MANUAL in all caps) that would allow the use of an EXTERNAL phone without setting it up as a aasterisk.phones entry.
+
+-	MEDIUM	add callback status with date and time definition to VICIDIAL. Need to figure out the best way to do this, an early attempt at this ended badly with most of the appointments being forgotten or discarded because the agent did not log in that day or during the time window. One thing I think we've settled on is to allow CALLBACKs for any status of disposition and just stick them in a separate table. We would also probably set up email reminders for them as well as some kind of popup window reminders no matter what campaign they were in. We're getting closer, but this is going to take a lot of testing before it becomes a reality.
+
+-	MEDIUM	per-campaign customer SQL query selections, like city and phone prefixes
+
+-	MEDIUM	rebuild the vdremote.php remote agents pages to use AJAX(PHP/Javascript/XMLHTTPRequest) for real-time popups of call data.
+
+-	MEDIUM	allow custom welcome message for vicidial campaigns.
+
+-	MEDIUM	change local_call_time to allow for variable time ranges instead of the presets that are available in the current version
+
+-	MEDIUM	create a cron script and method for creating new extensions in the sip.conf/iax.conf files as well as dialplan entries(extensions.conf). This will require more fields in the phones table to account for variables available to the protocols. The conf files would need to be altered before to have a flag for the beginning and ending of the auto-generated content. This would also necessitate a TEXT area for the extensions.conf content(that would be default generated but could be manually altered). The cron script would be run every 5 minutes or so to see if any phones had altered content, and if so generate new auto-content and do a 'reload' on the asterisk server to activate the new content.
+
+-	MEDIUM	add a count-up-timer to active channels on the astguiclient MAIN screen(this may be an Asterisk 1.2+ required feature).
+
+-	MEDIUM	Change VICIDIAL autodialing configuration to allow dialing of alt_phone numbers as well as address3 phone numbers after dialing main number. Best way for this may be to reconfigure the called_since_last_reset field to allow N, 1, 2, Y. This would require reprogramming several server scripts and php pages.
+
+-	MEDIUM	Allow manual dialing of an alt_phone or address3 phone number in vicidial.php in auto_dial mode. This requires a lot of changes to the code where dial_level>0 for things to work correctly, but should be possible.
+
+-	MEDIUM	Try a few of the frequently launched scripts as C programs(call_log.agi and the AST_send child scripts) to see if they reduce system load and/or speed up those processes.
+
+-	MEDIUM	Change the autodialing system around so that there can be dialing-out-only servers and agent-only servers. This is suprisingly simple to do, but would require all servers to be controlled by a single instance of AST_VDauto_dial.pl running on one machine.
+
+-	MEDIUM	Add method of picking up astGUIclient parked calls by only dialing digits on a regular extension without using the astGUIclient.
+
+-	MEDIUM	end-user documentation, room manager documentation, admin/installer/maintainer documentation as well as troubleshooting guide
+
+-	MEDIUM	Run some lab-style load tests on VICIDIAL and show recommended configurations as well as "highest recommended" settings
+
+-	MEDIUM	add a way of checking that there is no more than 1 channel in the meetme room with the agent before another call to that agent. Currently this happens less than 0.1% of the time(mostly on heavily loaded systems), but another check might change that to zero.
+
+-	MEDIUM	add Answering machine detection ability. This may involve some code changes to Asterisk but with the addition of some new subroutines to the dsp.c file it may be possible to develop some equations to detect answering machines without significantly effecting processor load. We figured out that for outbound campaigns it seems that putting a dial_timeout of between 24-30 seconds seems to remove upto 95% of the answering machines from being transferred to agents with no additional delay in answered calls being sent to agenst, which seems much preferrable to many answering machine detection methods out there. Also, adding documentation to show how to setup BackGroundDetect, NVFaxDetect and app_amd for call-answer-screening.
+
+
+
+-	LOW	add the ability to run separate companies on the same VICIDIAL server. This will not be easy. All admin tasks as well asl user tasks and stats will need to have divisions so that nothing is accessible from the other groups. Also, the resources of the system(outbound trunks, hard drive space, other shared elements, etc...) so that one group cannot hog the shared resources of the the server.
+
+-	LOW	We are also looking at adding a separate operator-specific GUI app to allow for better extension monitoring and transferring options that operators require. the web agc client is close to this goal.
+
+-	LOW	We are also looking at creating an inbound-agent-specific GUI that would ideally work with Asterisk queues but that is not very likely given the current lack of events being given off by queues(this is much less likely to be built now that VICIDIAL takes inbound calls)
+
+-	LOW	Making the server install script a customizable with installer prompts
+
+-	LOW	clean up the GUI LEADLOADER code a bit and fix the running processing totals. Soon to be depricated, because of use of admin web page for loading leads
+
+-	LOW	Create guidelines and suggestions for deactivating unused modules from Asterisk for astGUIclient users
+
+-	LOW	Revisit possibility of using something other than CallerIDname to tag a call process, probably a long shot without altering the Asterisk code, but that may be an option.
+
+-	ON-HOLD	Localization of each server based on Intl. dial codes and/or country codes. very difficult to do this based on dial-codes, if used in other country, best to not use the adjust_gmt script.
