@@ -1,0 +1,20 @@
+PREFIX	PROVINCE	ABBREVIATION
+T	Alberta  	AB
+V	British Columbia 	BC
+R	Manitoba 	MB
+E	New Brunswick 	NB
+A	Newfoundland and Labrador 	NL
+X	Northwest Territories 	NT
+B	Nova Scotia 	NS
+X	Nunavut 	NU
+K	Ontario 	ON
+L	Ontario 	ON
+M	Ontario 	ON
+N	Ontario 	ON
+P	Ontario 	ON
+C	Prince Edward Island 	PE
+G	Quebec 	QC
+H	Quebec 	QC
+J	Quebec 	QC
+S	Saskatchewan 	SK
+Y	Yukon 	YT

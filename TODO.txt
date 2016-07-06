@@ -1,0 +1,51 @@
++------------------------------------------------------------------------------+
+|                          Asterisk GUI client - TODO                          |
++------------------------------------------------------------------------------+
+
+-	DONE	We are toying with the idea of adding a "Hijack" feature that would allow you to take any channel from whoever they are talking to and direct it to your phone, but we're not sure that's such a good idea(we did it anyway). 
+
+-	DONE	Change the VICIDIAL_IN_LEADS script to run with Net::MySQL and the AST_SERVER config file
+
+-	DONE	Figure out how random VDautodial dies occur 2004-10-26 18:24:00 
+
+-	DONE	Allow for inbound calls to be taken by people logged into VICIDIAL with ability for callerID phone number to show up on agent's screen.
+
+-	DONE(but not perfect)	add ability to blend incoming and outgoing calls in the same campaign(CLOSER) for VICIDIAL.
+
+-	DONE	put more error-checking in place on VICIDIAL so that agents cannot login more than once and they are prompted  when noone(including them) is in the conference.
+
+-	DONE	Add option to allow calls(inbound and outbound) made in VICIDIAL to be sent to a configurable voicemailbox if they are not sent to an agent in the allotted time.
+
+-	DONE	Fixed inbound and outbound VICIDIAL queues to enforce ranking of calls by hold time to ensure longest holding person in a campaign gets sent to an agent first.
+
+-	MEDIUM	add callback status with date and time definition to VICIDIAL. Need to figure out the best way to do this, an early attempt at this ended badly with most of the appointments being forgotten or discarded because the agent did not log in that day or during the time window.
+
+-	MEDIUM	end-user documentation, room manager documentation, admin documentation as well as troubleshooting guide
+
+-	MEDIUM	Run some lab-style load tests on VICIDIAL and show recommended configurations as well as "highest recommended" settings
+
+-	MEDIUM	Add IAX clients compatibility, this may be tricky because trunks and clients show up in exactly the same way on the "show channels" command, I may have to create a listing of client logins that would be checked against at every update to make sure it wasn't a client that was showing up in the live_channels table instead of showing up in the live_sip_channels table.
+
+-	MEDIUM	Add Zap clients compatibility, this may be easier after doing the IAX clients feature, there are many of the same issues to work through, but it should be somewhat easier for Zap.
+
+-	MEDIUM	Now that the Asterisk CVS version always sends CallerID and CallerIDname separately, it could be possible to have a definable calleridnumber per campaign, the callerID name sent will still be screwed up, but it is a step in the right direction. We will not do this right away because it is a new development(in October 2004) within Asterisk and it would break older installs to enable it. We will wait until the installed user-base is further along before developing this option.
+
+-	MEDIUM	Doing load testing to make a better AST_update script. One that would handle manager lockups and blank responses better.
+
+-	LOW	alter VICIDIAL client and all autodial scripts so that when a call is transferred to closer that the status of that call in the vicidial_auto_calls table is changed to CLOSER so that more dials can be made while closer is still on the call(There are several problems with implementing this especially on fixed line systems).
+
+-	LOW	in astGUIclient add a a "send to voicemail" button on the popup for incoming calls.
+
+-	LOW	We are also looking at adding a separate operator-specific GUI app to allow for better extension monitoring and transferring options that operators require. 
+
+-	LOW	We are also looking at creating an inbound-agent-specific GUI that would ideally work with Asterisk queues but that is not very likely given the current lack of events being given off by queues(this is much less likely to be built now that VICIDIAL takes inbound calls)
+
+-	LOW	Making the server install script a customizable with installer prompts
+
+-	LOW	clean up the LEADLOADER code a bit and fix the running processing totals.
+
+-	LOW	Create guidelines and suggestions for deactivating unused modules from Asterisk for astGUIclient users
+
+-	LOW	Revisit possibility of using something other than CallerID to tag a call process, probably a long shot without altering the Asterisk code, but that may be an option.
+
+
