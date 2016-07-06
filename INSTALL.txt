@@ -1,0 +1,144 @@
+INSTALLATION SUMMARY:
+Here's my first stab at some installation instructions:
+
+################################################################################
+################################################################################
+####                                                                        ####
+####   THIS FILE IS DEPRICATED, LOOK AT THE SCRATCH_INSTALL.txt FILE FOR    ####
+####     INSTALL INSTRUCTIONS FROM ANY STATE OF ASTERISK INSTALLATION       ####
+####                                                                        ####
+################################################################################
+################################################################################
+
+HERE'S SOME SOFTWARE TO INSTALL ON YOUR ASTERISK SERVER:
+here's what you need to make sure you have installed on the machine to allow for 
+recording to work properly:
+sox - http://sourceforge.net/projects/sox/
+
+Here's the asterisk perl AGI module that you need loaded for perl AGI scripts:
+asterisk-perl - http://asterisk.gnuinter.net
+
+Here's a great program for starting asterisk in a detached screen that can log 
+verbose messages:
+screen - http://www.gnu.org/software/screen/
+
+OPTIONAL(but encouraged):
+Here's a nice terminal program to graph system load that will help you figure 
+out your capacity:
+http://www.daveltd.com/src/util/ttyload/
+
+
+To install my software you need to make sure you:
+ - have at least 1 SIP phone and 1 Zaptel channel available on your Asterisk server. 
+ - have a MySQL database "asterisk" created on a machine somewhere on your network 
+   that the Asterisk server and any clients you have can connect to. see 
+   MySQL_AST_CREATE_tables.sql file
+ - have perl with the Net::MySQL, Net::Telnet and Time::HiRes perl modules installed
+   on your Asterisk server
+   - you can use cpan to install these quickly (perl -MCPAN -e shell) 
+ - have all of your phones entered into the phones table of your asterisk database
+ - have an entry for your Asterisk server in the server_updater table
+
+Now you can install the astGUIclient server side scripts and configuration entries:
+ - add the extensions listed in the CONF_Asterisk.txt file to your extensions.conf 
+ Asterisk server config file
+ - add the meetme rooms listed in the CONF_Asterisk.txt file to your meetme.conf 
+ Asterisk server config file
+ - create a GSM formatted audio file named "park.gsm" that is 30 minutes long and 
+ put it in /var/lib/asterisk/sounds
+ - create a GSM formatted audio file named "conf.gsm" that is 30 minutes long and 
+ put it in /var/lib/asterisk/sounds
+   - I cannot include the audio files I use for copyright reasons(someone send me 
+   a royalty-free one to include)
+		- there is one more file you need that's not included with the download 
+		package, it's the conf.gsm file(this is the half-hour music file that we use 
+		to put people on hold). I have a free classical music file that is available 
+		free for download at the following two sites:
+			http://www.freedomphones.net/conf.gsm
+			http://astguiclient.sf.net/conf.gsm
+	   Once you have downloaded it, you will need to copy it to this folder:
+			/var/lib/asterisk/sounds/
+	   Then you will need to execute this command to copy it as the park file
+	   cp /var/lib/asterisk/sounds/conf.gsm /var/lib/asterisk/sounds/park.gsm
+
+ - add an entry for each of the conferences listed in the CONF_Asterisk.txt file to
+   the conferences MySQL table
+ - add the user "cron" to your system
+ - copy the following files to your /home/cron/ directory and chmod them to 0755:
+	 - ADMIN_keepalive_AST_update.pl - checks to see that updater is running
+	 - ADMIN_keepalive_AST_VDautodial.pl - checks to see that VDAD is running
+	 - ADMIN_keepalive_AST_send_listen.pl - checks to see that ACQS is running
+	 - ADMIN_restart_roll_logs.pl - rolls logs over datestamp upon restart
+	 - AST_CRON_mix_recordings.pl - command line recording mixer to be put in cron
+	   - you will want to modify this script to FTP to the proper place, or if
+	     you don't want to FTP them somewhere use AST_CRON_mix_recordings_BASIC.pl
+	 - AST_flush_DBqueue.pl - flushes the queue of old manager commands
+	 - AST_manager_kill_hung_congested.pl - kills CONGEST Local/ channels
+	 - AST_manager_listen.pl - listener for the Asterisk Central Queue System (ACQS)
+	 - AST_manager_send.pl - send-spawn for the ACQS
+	 - AST_reset_mysql_vars.pl - resets MySQL tables 
+	 - AST_send_action_child.pl - blind-send for the ACQS
+	 - AST_SERVER_conf.pl - file where you define your variables for the server apps
+	   - customize this file for your server specifics
+	 - AST_update.pl - DB updater of channels on the Asterisk server
+	 - AST_VDauto_dial.pl - script that runs the VICIDIAL autodialer
+	 - AST_VDhopper.pl - keeps the leads hopper full for VICIDIAL
+	 - AST_vm_update.pl - command line DB voicemail count updater
+	 - VICIDIAL_IN_new_leads_file.pl - script to load lead files into VICIDIAL
+
+ - copy the following files to your /var/lib/asterisk/agi-bin/ directory and chmod them to 0755:
+	 - agi-dtmf.agi - AGI/perl program that plays DTMF tines for conferences
+	 - agi-VDADtransfer.agi - AGI/perl part of VICIDIAL autodialer
+	 - call_log.agi - AGI/perl programm for call logging (OPTIONAL)
+	 - call_inbound.agi - AGI/perl programm for CallerID popup info (OPTIONAL)
+
+ - create the following empty directories and chmod 0777:
+	 - /home/cron/KILL/
+	 - /var/spool/incoming/monitor/DONE
+	 - /var/spool/incoming/monitor/ORIG
+
+ - add the following entries to the cron of your Asterisk server:
+### recording mixing for Asterisk
+1,6,11,16,21,26,31,36,41,46,51,56 * * * * /home/cron/AST_CRON_mix_recordings.pl
+
+### keepalive script for Asterisk updaters
+* * * * * /home/cron/ADMIN_keepalive_AST_update.pl
+
+### keepalive script for Asterisk manager queue system
+* * * * * /home/cron/ADMIN_keepalive_AST_send_listen.pl
+
+### keepalive script for Asterisk VICIDIAL autodial system
+* * * * * /home/cron/ADMIN_keepalive_AST_VDautodial.pl
+
+### kill congestion script for Asterisk updaters
+* * * * * /home/cron/AST_manager_kill_hung_congested.pl
+
+### updater for voicemail
+* * * * * /home/cron/AST_vm_update.pl
+
+### flush queue DB table every hour for entries older than 2 hours
+11 * * * * /home/cron/AST_flush_DBqueue.pl -q
+
+ - copy the "DTMF_sounds" files to /var/lib/asterisk/sounds
+
+
+
+INSTALL CLIENT SOFTWARE:
+- for windows, install activestate perl(http://www.activestate.com/) and copy the following files to C:\AST_VICI\:
+   - astGUIclient_1.0.3.pl - phone GUI application
+   - astVICIDIAL_0.6.pl - DIALER GUI application
+   - libs folder and everything in it
+- for linux, install perl with Tk::Tcl, Net::MySQL, Net::Telnet and Time::HiRes libraries and copy the following files to /usr/local/perl_TK/ and chmod 0755:
+   - astGUIclient_1.0.3.pl - phone GUI application
+   - astVICIDIAL_0.6.pl - DIALER GUI application
+   - libs folder and everything in it
+
+- customize the AST_VICI_conf.pl configuration file for your client station/phone/server
+
+
+
+Start it all up and let me know if it works.
+
+
+
+
