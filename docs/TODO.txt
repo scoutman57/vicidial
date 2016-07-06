@@ -1,0 +1,64 @@
++------------------------------------------------------------------------------+
+|                          Asterisk GUI client - TODO                          |
++------------------------------------------------------------------------------+
+
+-	DONE	add a vicidial_campaign_statuses table that would contain campaign-specific statuses, and associated web admin page for adding/editing/deleting campaign-statuses.
+
+-	DONE	Now that the Asterisk Stable version has corrected many callerID problems it has been made possible to send a custom CallerID for each campaign. We do this by sending the ACQS ID as the CallerIDname(which is not used by the Telco callerID system anyway) and the custom CallerID as the CallerIDnum: ("Calleridnamecode" <calleridnum>). This works in our tests on a PRI T1 line and seems to work on releases 1.0.6 and 1.0.7(but may also work on older releases we just haven't tested them)
+
+-	DONE	created a method for gathering server performance statistics and placing them in the database for later retrieval and display. We integrated this into the AST_update script and it is activated by setting a flag to 1 at the top of the script. This was very useful for us when we were testing Digium v. Sangoma T1 cards.
+
+-	DONE	look into doing an all-HTML-php implementation of astGUIclient using PHP and Javascript(with XMLHTTPRequest[aka AJAX]) to do realtime web page updating. This would free users from having to have anything but a web browser installed and would help sysadmins as well. It would also open up several new options for users. Initial testing using SAJAX was not promising, it seems that the timing mechanism can go haywire and start jumping up in the thousands of seconds when you open another instance of any internet browser. This would break any implementation of the client apps because they are very dependant on a reliable local timing source. So we tried raw coding of Javascript + PHP + XMLHTTPRequest and things were much more stable and reliable, but we ended up with some memory issues in IE(but not in Firefox). At this point we've had the beta astGUIclient web app open for over a week straight in Firefox with no problems. 
+-	DONE	in astGUIclient add a "send to voicemail" button on the popup for incoming calls while still ringing.
+-	DONE	in astGUIclient allow all client phone connections to be shown
+-	DONE	in astGUIclient allow transfers from any screen to conferences, other extensions or vmail
+
+-	DONE	in vicidial add user_groups to help better seperate users and for future campaign options
+
+-	DONE	in all web pages add logout button that would clear USER/PASS values in browser sessions
+
+-	DONE	Fix the send-to-voicemail portion of the agi scripts within vicidial to use the alternate AGI method of redirection because it is more compatible on all systems than the Manager API method from within AGI scripts.
+
+-	DONE	add a web page that would allow basic importing of leads into vicidial as well as some very basic list manipulation.
+
+-	DONE	Look into MySQL authentication problems with Net::MySQL
+-	DONE	Fix astguiclient.php and associated scripts to not error if no results present(mysql_num_rows)
+-	DONE	Document the variables that can be used with the AGI scripts better
+
+-	HIGH	Allow for a different transfer extension for each campaign(currently it is hard-coded to 8365 in the AST_SERVER_conf.pl file for each server). This can allow for a different agi script for each campaign to more easily facilitate different ways of call answering without altering the code of several scripts.
+
+-	HIGH	look into doing an all-HTML-php implementation of VICIDIAL using PHP and Javascript(with XMLHTTPRequest) to do realtime web page updating. This will be much easier after finishing the astGUIclient app as a web page allowing us to work out the bugs on the app that is not as intensively used as VICIDIAL is.
+
+-	MEDIUM	We hope to finally get around to implementing SIP trunks with the astGUIclient suite. This will mean slight reduction in effeciancy of how it operates, but for compatibility reasons we really need to get it working
+
+-	MEDIUM Add method of picking up astGUIclient parked calls by only dialing digits on a regular extension without using the astGUIclient.
+
+-	MEDIUM	add callback status with date and time definition to VICIDIAL. Need to figure out the best way to do this, an early attempt at this ended badly with most of the appointments being forgotten or discarded because the agent did not log in that day or during the time window. One thing I think we've settled on is to allow CALLBACKs for any status of disposition and just stick them in a separate table. We would also probably set up email reminders for them as well as some kind of popup window reminders no matter what campaign they were in. We're getting closer, but this is going to take a lot of testing before it becomes a reality.
+
+-	MEDIUM	end-user documentation, room manager documentation as well as troubleshooting guide
+
+-	MEDIUM	Run some lab-style load tests on VICIDIAL and show recommended configurations as well as "highest recommended" settings
+
+-	MEDIUM	Doing load testing to make a better AST_update script. One that would handle manager lockups and blank responses better.
+
+-	MEDIUM	add a way of checking that there is no more than 1 channel in the meetme room with the agent before another call to that agent. Currently this happens less than 0.1% of the time(mostly on heavily loaded systems), but another check might change that to zero.
+
+-	MEDIUM	add a "maximum VDAD outbound channels" to the AST_SERVER_conf.pl file that would prevent VDautodial from trying to dial more lines that the server has capacity.
+
+-	MEDIUM	add Answering machine detection ability. This may involve some code changes to Asterisk but with the addition of some new subroutines to the dsp.c file it may be possible to develop some equations to detect answering machines without significantly effecting processor load. We figured out that for outbound campaigns it seems that putting a dial_timeout of between 24-30 seconds seems to remove upto 95% of the answering machines from being transferred to agents with no additional delay in answered calls being sent to agenst, which seems much preferrable to many answering machine detection methods out there.
+
+-	LOW	alter VICIDIAL client and all autodial scripts so that when a call is transferred to closer that the status of that call in the vicidial_auto_calls table is changed to CLOSER so that more dials can be made while closer is still on the call(There are several problems with implementing this especially on fixed line systems).
+
+-	LOW	We are also looking at adding a separate operator-specific GUI app to allow for better extension monitoring and transferring options that operators require. the web agc client is close to this goal.
+
+-	LOW	We are also looking at creating an inbound-agent-specific GUI that would ideally work with Asterisk queues but that is not very likely given the current lack of events being given off by queues(this is much less likely to be built now that VICIDIAL takes inbound calls)
+
+-	LOW	Making the server install script a customizable with installer prompts
+
+-	LOW	clean up the LEADLOADER code a bit and fix the running processing totals.
+
+-	LOW	Create guidelines and suggestions for deactivating unused modules from Asterisk for astGUIclient users
+
+-	LOW	Revisit possibility of using something other than CallerID to tag a call process, probably a long shot without altering the Asterisk code, but that may be an option.
+
+

@@ -1,0 +1,30 @@
+These are a basic list of requirements for using astGUIclient. It is highly
+recommended that you read the SCRATCH_INSTALL doc for more information on
+installing the package properly.
+
+Requirements for installing astGUIclient on an Asterisk server:
+- Asterisk 1.0.7 recommended but will work with older versions and CVS_HEAD
+- Zap trunks(T1/E1 or PSTN lines) or IAX2 trunks required
+- Client phones can be SIP/IAX/Zap
+- SoX 12.17.5 or greater must be installed
+- GNU screen 3.9.15 or greater must be installed
+- ntp must be installed and syncing to same time source as clients
+- Perl5 with several CPAN modules(Time::HiRes, Net::MySQL, Net::Telnet, etc)
+- Access to MySQL server, must be version 4.0.X or higher
+- Access to Apache/PHP webserver
+
+Requirements for using astGUIclient(perl version) and VICIDIAL:
+- Recommended 500MHz speed or faster and 64MB RAM or more
+- Any Unix with Xwindows, Mac OS9/X or Win98/2k/XP operating system
+- Recommended use ActivePerl for all OSs
+- If using standard perl make sure Tk modules installed
+- ntp or sntp time syncing to same source as server
+- Proper configuration settings for each phone/computer in the phones DB table
+
+Requirements for using the astGUIclient web-client version
+- Recommended 500MHz speed or faster and 64MB RAM or more
+- Any Unix with Xwindows, Mac OS9/X or Win98/2k/XP operating system
+- Recommended use Firefox for all OSs (will run under IE5.0 or greater as well)
+  NOTE: (Internet Explorer has memory leaks that will cause it to freeze +3hrs)
+- ntp or sntp time syncing to same source as server
+- Proper configuration settings for each phone/computer in the phones DB table
