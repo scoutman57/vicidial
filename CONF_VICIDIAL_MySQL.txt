@@ -1,0 +1,222 @@
+### to use VICIDIAL create these tables in your "asterisk" MySQL database
+
+################################################################################
+################################################################################
+####                                                                        ####
+####   THIS FILE IS DEPRICATED, LOOK AT THE MySQL_AST_CREATE_tables.sql     ####
+####     FILE FOR MORE INFO ON MYSQL DATABASE SETUP                         ####
+####                                                                        ####
+################################################################################
+################################################################################
+
+### this is the table where your leads go, to insert them manually see the 
+### template below, to insert batch files of them see the 
+### VICIDIAL_IN_new_leads_file.pl script
+
+ CREATE TABLE vicidial_list (
+lead_id INT(9) UNSIGNED AUTO_INCREMENT PRIMARY KEY UNIQUE NOT NULL,
+entry_date DATETIME,
+modify_date TIMESTAMP,
+status VARCHAR(6),				# always set to NEW initially
+user VARCHAR(20),				# user that last called customer
+vendor_lead_code VARCHAR(20),			# optional custom field
+source_id VARCHAR(6),				# where the lead came from
+list_id INT(8) UNSIGNED,			# what list the lead is part of
+campaign_id VARCHAR(8),				# to be set in admin website
+called_since_last_reset ENUM('Y','N'),		# lead called since last reset
+phone_code VARCHAR(10),				# country dialing code
+phone_number VARCHAR(10),			# customer phone number
+title VARCHAR(4),
+first_name VARCHAR(30),
+middle_initial VARCHAR(1),
+last_name VARCHAR(30),
+address1 VARCHAR(100),
+address2 VARCHAR(100),
+address3 VARCHAR(100),
+city VARCHAR(50),
+state VARCHAR(2),
+province VARCHAR(50),
+postal_code VARCHAR(10),
+country_code VARCHAR(3),
+gender ENUM('M','F'),
+date_of_birth DATE,
+alt_phone VARCHAR(10),
+email VARCHAR(70),
+security_phrase VARCHAR(100),
+comments VARCHAR(255)
+);
+
+##### this table is currently unused #####
+ CREATE TABLE vicidial_list_extra (
+lead_id_extra INT(9) UNSIGNED AUTO_INCREMENT PRIMARY KEY UNIQUE NOT NULL,
+lead_id INT(9) UNSIGNED NOT NULL,
+ssn VARCHAR(10),
+license_state VARCHAR(2),
+license_number VARCHAR(30),
+employer_name VARCHAR(30),
+employer_number VARCHAR(20),
+payment_type VARCHAR(10),
+bank_name VARCHAR(50),
+bank_city VARCHAR(50),
+bank_state VARCHAR(2),
+bank_routing_number VARCHAR(9),
+bank_account_number VARCHAR(30),
+bank_account_name VARCHAR(30),
+bank_account_type VARCHAR(10),
+bank_check_number VARCHAR(10),
+cc_number VARCHAR(20),
+cc_expire VARCHAR(4),
+cc_cvv VARCHAR(4),
+cc_issue VARCHAR(4),
+cc_bank VARCHAR(50),
+cc_bank_phone VARCHAR(20),
+upsells VARCHAR(30),
+index (lead_id)
+);
+
+
+
+ CREATE TABLE vicidial_log (
+uniqueid DOUBLE(18,7) PRIMARY KEY UNIQUE NOT NULL,
+lead_id INT(9) UNSIGNED NOT NULL,
+list_id INT(8) UNSIGNED,
+campaign_id VARCHAR(8),
+call_date DATETIME,
+start_epoch INT(10) UNSIGNED,
+end_epoch INT(10) UNSIGNED,
+length_in_sec INT(10),
+status VARCHAR(6),
+phone_code VARCHAR(10),
+phone_number VARCHAR(10),
+user VARCHAR(20),
+comments VARCHAR(255),
+processed ENUM('Y','N'),
+index (lead_id)
+);
+
+### use the Admin website to add new users
+### you must manually add an admin user with level 8 or 9 to use the web admin for the first time
+
+ CREATE TABLE vicidial_users (
+user_id INT(9) UNSIGNED AUTO_INCREMENT PRIMARY KEY UNIQUE NOT NULL,
+user VARCHAR(20),
+pass VARCHAR(20),
+full_name VARCHAR(50),
+user_level INT(2),
+index (user)
+);
+
+ CREATE TABLE vicidial_user_log (
+user_log_id INT(9) UNSIGNED AUTO_INCREMENT PRIMARY KEY UNIQUE NOT NULL,
+user VARCHAR(20),
+event VARCHAR(50),
+campaign_id VARCHAR(8),
+event_date DATETIME,
+event_epoch INT(10) UNSIGNED,
+index (user)
+);
+
+### use the Admin website to create new campaigns
+
+ CREATE TABLE vicidial_campaigns (
+campaign_id VARCHAR(8) PRIMARY KEY UNIQUE NOT NULL,
+campaign_name VARCHAR(40),
+active ENUM('Y','N'),
+lead_order VARCHAR(20),
+dial_status_a VARCHAR(6),
+dial_status_b VARCHAR(6),
+dial_status_c VARCHAR(6),
+dial_status_d VARCHAR(6),
+dial_status_e VARCHAR(6),
+lead_order VARCHAR(20),
+park_ext VARCHAR(10),
+park_file_name VARCHAR(10)
+);
+
+### use the Admin website to create new lists after leads are inserted
+
+ CREATE TABLE vicidial_lists (
+list_id INT(8) UNSIGNED PRIMARY KEY UNIQUE NOT NULL,
+list_name VARCHAR(30),
+campaign_id VARCHAR(8),
+active ENUM('Y','N')
+);
+
+ CREATE TABLE vicidial_statuses (
+status VARCHAR(6) PRIMARY KEY UNIQUE NOT NULL,
+status_name VARCHAR(30),
+selectable ENUM('Y','N')
+);
+
+### don't forget to insert your dedicated vicidial conferences in this table
+
+ CREATE TABLE vicidial_conferences (
+conf_exten INT(7) UNSIGNED NOT NULL,
+server_ip VARCHAR(15) NOT NULL,
+extension VARCHAR(20)
+);
+
+
+### this table is part of the ACQS build it if you haven't already
+
+ CREATE TABLE vicidial_manager (
+man_id INT(9) UNSIGNED AUTO_INCREMENT PRIMARY KEY UNIQUE NOT NULL,
+uniqueid DOUBLE(18,7),
+entry_date DATETIME,
+status  ENUM('NEW','QUEUE','SENT','UPDATED','DEAD'),
+response  ENUM('Y','N'),
+server_ip VARCHAR(15) NOT NULL,
+channel VARCHAR(30),
+action VARCHAR(20),
+callerid VARCHAR(20),
+cmd_line_b VARCHAR(50),
+cmd_line_c VARCHAR(50),
+cmd_line_d VARCHAR(50),
+cmd_line_e VARCHAR(50),
+cmd_line_f VARCHAR(50),
+cmd_line_g VARCHAR(50),
+cmd_line_h VARCHAR(50),
+cmd_line_i VARCHAR(50),
+cmd_line_j VARCHAR(50),
+cmd_line_k VARCHAR(50),
+index (callerid),
+index (uniqueid)
+);
+
+
+### sample inserts once you have the tables created
+
+insert into vicidial_users values('','10001','admin','Matt Florell','9');
+insert into vicidial_campaigns values('TESTCAMP','Test campaign for VICIDIAL','Y','NEW','','','','');
+insert into vicidial_lists values('101','Test list for VICIDIAL','TESTCAMP','Y');
+insert into vicidial_lists values('102','Test list Answering Machines','TESTCAMP','Y');
+insert into vicidial_lists values('103','Test list Busy','TESTCAMP','Y');
+insert into vicidial_list values('','2004-01-06','','NEW','','','TEST01','101','TESTCAMP','N','1','7275551212','Mr','Matt','X','lead01','1234 Fake St.','','','Clearwater','FL','','33760','USA','M','1970-01-01','','test@test.com','suprise','comments go here');
+insert into vicidial_list values('','2004-01-06','','NEW','','','TEST01','101','TESTCAMP','N','1','7275551212','Mr','Matt','X','lead02','1234 Fake St.','','','Clearwater','FL','','33760','USA','M','1970-01-01','','test@test.com','suprise','comments go here');
+insert into vicidial_list values('','2004-01-07','','NEW','','','TEST01','101','TESTCAMP','N','1','7275551212','Mr','Matt','X','lead03','1234 Fake St.','','','Clearwater','FL','','33760','USA','M','1970-01-01','','test@test.com','suprise','comments go here');
+insert into vicidial_list values('','2004-01-07','','NEW','','','TEST01','101','TESTCAMP','N','1','7275551212','Mr','Matt','X','lead04','1234 Fake St.','','','Clearwater','FL','','33760','USA','M','1970-01-01','','test@test.com','suprise','comments go here');
+insert into vicidial_list values('','2004-01-07','','NEW','','','TEST01','101','TESTCAMP','N','1','7275551212','Mr','Matt','X','lead05','1234 Fake St.','','','Clearwater','FL','','33760','USA','M','1970-01-01','','test@test.com','suprise','comments go here');
+insert into vicidial_list values('','2004-01-07','','NEW','','','TEST01','101','TESTCAMP','N','1','7275551212','Mr','Matt','X','lead06','1234 Fake St.','','','Clearwater','FL','','33760','USA','M','1970-01-01','','test@test.com','suprise','comments go here');
+insert into vicidial_list values('','2004-01-07','','NEW','','','TEST01','101','TESTCAMP','N','1','7275551212','Mr','Matt','X','lead07','1234 Fake St.','','','Clearwater','FL','','33760','USA','M','1970-01-01','','test@test.com','suprise','comments go here');
+
+insert into vicidial_list values('','2004-01-15','','NEW','','','TEST02','102','TESTCAMP','N','01144','1273702248','Mr','UKans','X','lead08','14001 63rd Way N','','','Clearwater','FL','','33760','USA','M','1970-01-01','','test@test.com','suprise','comments go here');
+insert into vicidial_list values('','2004-01-15','','NEW','','','TEST02','102','TESTCAMP','N','01144','1527836214','Mr','UKans','X','lead09','14001 63rd Way N','','','Clearwater','FL','','33760','USA','M','1970-01-01','','test@test.com','suprise','comments go here');
+insert into vicidial_list values('','2004-01-15','','NEW','','','TEST02','102','TESTCAMP','N','01144','1212405456','Mr','UKans','X','lead10','14001 63rd Way N','','','Clearwater','FL','','33760','USA','M','1970-01-01','','test@test.com','suprise','comments go here');
+
+
+insert into vicidial_statuses values('NEW','New Lead','N');
+insert into vicidial_statuses values('QUEUE','Lead To Be Called','N');
+insert into vicidial_statuses values('INCALL','Lead Being Called','N');
+insert into vicidial_statuses values('CALLBK','Call Back','Y');
+insert into vicidial_statuses values('A','Answering Machine','Y');
+insert into vicidial_statuses values('B','Busy','Y');
+insert into vicidial_statuses values('DC','Disconnected Number','Y');
+insert into vicidial_statuses values('DEC','Declined Sale','Y');
+insert into vicidial_statuses values('DNC','DO NOT CALL','Y');
+insert into vicidial_statuses values('SALE','Sale Made','Y');
+insert into vicidial_statuses values('N','No Answer','Y');
+insert into vicidial_statuses values('NI','Not Interested','Y');
+insert into vicidial_statuses values('NP','No Pitch No Price','Y');
+insert into vicidial_statuses values('XFER','Call Transferred','Y');
+
+

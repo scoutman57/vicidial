@@ -1,0 +1,33 @@
+### Create the following tables in your "asterisk" MySQL database
+
+
+################################################################################
+################################################################################
+####                                                                        ####
+####   THIS FILE IS DEPRICATED, LOOK AT THE MySQL_AST_CREATE_tables.sql     ####
+####     FILE FOR MORE INFO ON MYSQL DATABASE SETUP                         ####
+####                                                                        ####
+################################################################################
+################################################################################
+
+### remember to prepopulate the conferencing table with meetme conferences defined
+### remember to prepopulate the phones table with proper values
+### remember to prepopulate the server_updater table with the asterisk servers' IP addresses
+
+TABLE phones
+extension VARCHAR(20),		# SIP extension without "SIP/" SIP/cc101 would be "cc101"
+dialplan_number INT(10),	# extensions.conf number to get to the phone i.e. "101"
+voicemail_id VARCHAR(10),	# voicemail.conf number (not required)
+phone_ip VARCHAR(15),		# IP address of phone (not required)
+computer_ip VARCHAR(15),	# IP address of client computer (not required)
+server_ip VARCHAR(15),		# IP address of asterisk server
+login VARCHAR(15),		# phone login (not required)
+pass VARCHAR(10),		# phone password (not required)
+status VARCHAR(10),		# IP address of client computer (not required)
+active ENUM('Y','N'),		# whether the phone is active (not required)
+phone_type VARCHAR(50),		# type of phone (not required)
+fullname VARCHAR(50),		# full name of phone owner (not required)
+company VARCHAR(10),		# company that phone belongs to (not required)
+picture VARCHAR(19),		# picture of phone user (not required)
+messages INT(4),		# number of new messages, leave blank
+old_messages INT(4)		# number of old messages, leave blank
