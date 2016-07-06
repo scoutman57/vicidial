@@ -1,0 +1,283 @@
+NON-AGENT API DOCUMENT					Started: 2008-07-24
+
+This document describes the functions of an API(Application Programming 
+Interface) for all functions NOT directly relating to the VICIDIAL Agent screen. 
+This functionality will be rather limited at first and will be built upon as 
+critical functions are identified and programmed into it.
+
+There is also a new agent API script, for more information on that, please read
+the AGENT_API.txt document.
+
+
+
+
+API functions:
+version - shows version and build of the API, along with the date/time
+sounds_list - outputs a list of audio files from the audio store
+moh_list - outputs a list of music on hold classes in the system
+vm_list - outputs a list of voicemail boxes in the system
+blind_monitor - calls user-defined phone and places them in session as blind monitor
+add_lead - adds a new lead to the vicidial_list table with several fields and options
+agent_ingroup_info - shows in-group and outbound auto-dial info for logged-in agent
+
+
+
+New scripts:
+/vicidial/non_agent_api.php - the script that is accessed to execute commands
+
+
+Changes:
+80724-1723 - First build
+90428-0208 - Added blind_monitor function
+90513-1720 - Added sounds_list function
+90721-1432 - Added rank and owner
+90904-1535 - Added moh_list musiconhold function
+90916-2342 - Added vm_list voicemail list
+91203-1140 - Added agent_ingroup_info feature
+91216-0331 - Added duplication check features to add_lead function
+
+
+
+API Functions use the 'function' variable
+
+NOTE: Just as with the Agent API, the non-agent API requires the user and pass of a
+valid api-enabled vicidial_users account to execute actions.
+
+
+
+--------------------------------------------------------------------------------
+version - shows version and build of the API, along with the date/time
+
+Example URL strings for API calls:
+http://server/vicidial/non_agent_api.php?function=version
+
+Example responses:
+VERSION: 2.0.5-4|BUILD: 80910-0020|DATE: 2008-09-10 00:26:43|EPOCH: 1221020803 
+
+
+
+
+
+--------------------------------------------------------------------------------
+sounds_list - outputs a list of audio files from the audio store
+
+NOTE: api user for this function must have user_level set to 7 or higher
+
+OPTIONAL FIELDS-
+format -		format of the output(tab, link, selectframe)
+stage -			how to sort the output(date, size, name)
+comments -		name of the field to populate
+
+
+Example URL strings for API calls:
+http://server/vicidial/non_agent_api.php?source=test&user=6666&pass=1234&function=sounds_list&format=selectframe&comments=fieldname&stage=date
+
+Example responses:
+<success is inferred by output of audio files list>
+
+ERROR: sounds_list USER DOES NOT HAVE PERMISSION TO VIEW SOUNDS LIST
+
+ERROR: sounds_list CENTRAL SOUND CONTROL IS NOT ACTIVE
+
+
+
+
+
+--------------------------------------------------------------------------------
+moh_list - outputs a list of music on hold classes in the system
+
+NOTE: api user for this function must have user_level set to 7 or higher
+
+OPTIONAL FIELDS-
+format -		format of the output(tab, link, selectframe)
+comments -		name of the field to populate
+
+
+Example URL strings for API calls:
+http://server/vicidial/non_agent_api.php?source=test&user=6666&pass=1234&function=moh_list&format=selectframe&comments=fieldname&stage=date
+
+Example responses:
+<success is inferred by output of moh classes list>
+
+ERROR: moh_list USER DOES NOT HAVE PERMISSION TO VIEW SOUNDS LIST
+
+ERROR: moh_list CENTRAL SOUND CONTROL IS NOT ACTIVE
+
+
+
+
+
+--------------------------------------------------------------------------------
+vm_list - outputs a list of voicemail boxes in the system
+
+NOTE: api user for this function must have user_level set to 7 or higher
+
+OPTIONAL FIELDS-
+format -		format of the output(tab, link, selectframe)
+comments -		name of the field to populate
+
+
+Example URL strings for API calls:
+http://server/vicidial/non_agent_api.php?source=test&user=6666&pass=1234&function=vm_list&format=selectframe&comments=fieldname&stage=date
+
+Example responses:
+<success is inferred by output of voicemail boxes list>
+
+ERROR: vm_list USER DOES NOT HAVE PERMISSION TO VIEW VOICEMAIL BOXES LIST
+
+ERROR: vm_list CENTRAL SOUND CONTROL IS NOT ACTIVE
+
+
+
+
+
+--------------------------------------------------------------------------------
+blind_monitor - calls user-defined phone and places them in session as blind monitor
+
+NOTE: api user for this function must have user_level set to 7 or higher
+
+REQUIRED FIELDS-
+phone_login -		alpha-numeric, no spaces or special characters allowed
+session_id -		must be all numbers, 7 digits
+server_ip -		must be all numbers and dots, max 15 characters
+source -		description of what originated the API call (maximum 20 characters)
+stage -			MONITOR, BARGE or HIJACK, default is MONITOR
+			 (HIJACK option is not currently functional)
+
+
+Example URL strings for API calls:
+http://server/vicidial/non_agent_api.php?source=test&user=6666&pass=1234&function=blind_monitor&phone_login=350a&session_id=8600051&server_ip=10.10.10.16&stage=MONITOR
+
+Example responses:
+SUCCESS: blind_monitor HAS BEEN LAUNCHED - 350a|010*010*010*017*350|8600051
+
+ERROR: blind_monitor INVALID PHONE LOGIN - 350q 
+
+ERROR: blind_monitor INVALID SESSION ID - 8602051 
+
+ERROR: blind_monitor USER DOES NOT HAVE PERMISSION TO BLIND MONITOR - 6666|0 
+
+ERROR: NO FUNCTION SPECIFIED
+
+
+
+
+--------------------------------------------------------------------------------
+agent_ingroup_info - shows in-group and outbound auto-dial info for logged-in agent
+
+REQUIRED FIELDS-
+agent_user -		2-20 characters
+source -		description of what originated the API call (maximum 20 characters)
+
+SETTINGS FIELDS-
+stage -			info(show information only), change(show options to change), text(standard non-HTML output)
+
+Example URL strings for API calls:
+http://server/vicidial/non_agent_api.php?source=test&function=agent_ingroup_info&stage=change&user=6666&pass=1234&agent_user=1000
+
+Example responses:
+ERROR: agent_ingroup_info USER DOES NOT HAVE PERMISSION TO GET AGENT INFO - 6666|0
+ERROR: agent_ingroup_info INVALID USER ID - 1255|6666
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------
+add_lead - adds a new lead to the vicidial_list table with several fields and options
+
+NOTE: api user for this function must have modify_leads set to 1 and user_level
+      must be set to 8 or higher
+
+REQUIRED FIELDS-
+phone_number -		must be all numbers, 6-16 digits
+phone_code -		must be all numbers, 1-4 digits, defaults to 1 if not set
+list_id -		must be all numbers, 3-12 digits, defaults to 999 if not set
+source -		description of what originated the API call (maximum 20 characters)
+
+SETTINGS FIELDS-
+dnc_check -		Y, N or AREACODE, default is N
+campaign_dnc_check -	Y, N or AREACODE, default is N
+campaign_id -		2-8 Character campaign ID, required if using campaign_dnc_check
+add_to_hopper -		Y or N, default is N
+hopper_priority -	99 to -99, the higher number the higher priority, default is 0
+hopper_local_call_time_check - Y or N, default is N. Validate the local call time before inserting lead in the hopper
+duplicate_check -	Check for duplicate records in the system, can select more than one (duplicate_check=DUPLIST-DUPTITLEALTPHONELIST)
+			If duplicate is found, will return error, the duplicate data and lead_id and list_id of existing record
+			Here are the duplicate_check options:
+				DUPLIST - check for duplicate phone_number in same list
+				DUPCAMP - check for duplicate phone_number in all lists for this list's campaign
+				DUPSYS - check for duplicate phone_number in entire system
+				DUPTITLEALTPHONELIST - check for duplicate title and alt_phone in same list
+				DUPTITLEALTPHONECAMP - check for duplicate title and alt_phone in all lists for this list's campaign
+				DUPTITLEALTPHONESYS - check for duplicate title and alt_phone in entire system
+
+(for fields with spaces in the values, you can replace the space with a plus + sign[address, city, first_name, etc...])
+OPTIONAL FIELDS- 
+vendor_lead_code -	1-20 characters
+source_id  -		1-50 characters
+gmt_offset_now -	overridden by auto-lookup of phone_code and area_code portion of phone number if applicable
+title -			1-4 characters
+first_name -		1-30 characters
+middle_initial -	1 character
+last_name -		1-30 characters
+address1 -		1-100 characters
+address2 -		1-100 characters
+address3 -		1-100 characters
+city -			1-50 characters
+state -			2 characters
+province -		1-50 characters
+postal_code -		1-10 characters
+country_code -		3 characters
+gender -		U, M, F (Undefined, Male, Female) - defaults to 'U'
+date_of_birth -		YYYY-MM-DD
+alt_phone -		1-12 characters
+email -			1-70 characters
+security_phrase -	1-100 characters
+comments -		1-255 characters
+multi_alt_phones -	5-1024 characters (see examples for more info)
+rank -			1-5 digits
+owner -			1-20 characters (user ID, Territory or user group)
+
+
+Multi-ALT-Phones format:
+
+7275551212_1_work!7275551213_1_sister+house!1234567890_1_neighbor
+
+The multi-alt-phones field is formatted as a field of phone-number/phone-code/phone-note set of data(phone code and alt_note are both optional and the phone code can be overridden by the force phone code flag). The record delimiter is an exclamation point with the optional phone code and note delimited within the record by an underscore character _.
+
+
+Example URL strings for API calls:
+http://server/vicidial/non_agent_api.php?source=test&user=6666&pass=1234&function=add_lead&phone_number=7275551111
+
+http://server/vicidial/non_agent_api.php?source=test&user=6666&pass=1234&function=add_lead&phone_number=7275551212&phone_code=1&list_id=999&dnc_check=N&first_name=Bob&last_name=Wilson
+
+http://server/vicidial/non_agent_api.php?source=test&user=6666&pass=1234&function=add_lead&phone_number=7275551111&phone_code=1&list_id=999&dnc_check=N&first_name=Bob&last_name=Wilson&add_to_hopper=Y&hopper_local_call_time_check=Y
+
+http://server/vicidial/non_agent_api.php?source=test&user=6666&pass=1234&function=add_lead&phone_number=7275551111&phone_code=1&list_id=999&dnc_check=N&campaign_dnc_check=Y&campaign_id=TESTCAMP&first_name=Bob&last_name=Wilson&address1=1234+Main+St.&city=Chicago+Heights&state=IL&add_to_hopper=Y&hopper_local_call_time_check=Y&multi_alt_phones=7275551212_1_work!7275551213_1_sister+house!1234567890_1_neighbor
+
+http://server/vicidial/non_agent_api.php?source=test&user=6666&pass=1234&function=add_lead&phone_number=7275551212&phone_code=1&list_id=999&dnc_check=N&first_name=Bob&last_name=Wilson&duplicate_check=DUPLIST-DUPTITLEALTPHONELIST
+
+
+Example responses:
+SUCCESS: add_lead LEAD HAS BEEN ADDED - 7275551111|6666|999|193715|-4
+NOTICE: add_lead ADDED TO HOPPER - 7275551111|6666|193715|1677922
+
+SUCCESS: add_lead LEAD HAS BEEN ADDED - 7275551111|6666|999|193716|-4
+NOTICE: add_lead MULTI-ALT-PHONE NUMBERS LOADED - 3|6666|193716
+NOTICE: add_lead NOT ADDED TO HOPPER, OUTSIDE OF LOCAL TIME - 7275551111|6666|193716|-4|0
+
+ERROR: add_lead INVALID PHONE NUMBER - 72755|6666 
+
+ERROR: add_lead USER DOES NOT HAVE PERMISSION TO ADD LEADS TO THE SYSTEM - 6666|0 
+
+ERROR: NO FUNCTION SPECIFIED
+
+ERROR: add_lead DUPLICATE PHONE NUMBER IN LIST - 7275551111|101|8765444
+ERROR: add_lead DUPLICATE PHONE NUMBER IN CAMPAIGN LISTS - 7275551111|101|8765444|101
+ERROR: add_lead DUPLICATE PHONE NUMBER IN SYSTEM - 7275551111|101|8765444|101
+ERROR: add_lead DUPLICATE TITLE ALT_PHONE IN LIST - 1234|7275551111|101|8765444
+ERROR: add_lead DUPLICATE TITLE ALT_PHONE IN CAMPAIGN LISTS - 1234|7275551111|101|8765444|101
+ERROR: add_lead DUPLICATE TITLE ALT_PHONE IN SYSTEM - 1234|7275551111|101|8765444|101
