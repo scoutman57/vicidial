@@ -1,0 +1,292 @@
+Here is what you need to add to your Asterisk configuration by configuration filename:
+
+Notes:
+- You do NOT have to have MusicOnHold enabled or mpg123 installed to use this
+- it is assumed in the client app code that you need to dial a "9" to get an outside line
+- Parking is really just sending a call to a a Playback file then doing a redirect to an extension
+
+---------------------------
+extensions.conf
+---------------------------
+
+; park channel for client GUI parking, hangup after 30 minutes
+;    create a GSM formatted audio file named "park.gsm" that is 30 minutes long
+;    and put it in /var/lib/asterisk/sounds
+exten => 8301,1,Answer
+exten => 8301,2,Playback(park)
+exten => 8301,3,Hangup
+
+
+; park channel for client GUI conferencing, hangup after 30 minutes
+;    create a GSM formatted audio file named "conf.gsm" that is 30 minutes long
+;    and put it in /var/lib/asterisk/sounds
+exten => 8302,1,Answer
+exten => 8302,2,Playback(conf)
+exten => 8302,3,Hangup
+
+
+; this is used for recording conference calls, the client app sends the filename
+;    value as a callerID recordings go to /var/spool/asterisk/monitor
+exten => 8309,1,Answer
+exten => 8309,2,Monitor(wav,${CALLERIDNUM})
+exten => 8309,3,Wait,3600
+exten => 8309,4,Hangup
+
+
+; this is used for sending DTMF signals within conference calls, the client app
+;    sends the digits to be played in the callerID field
+;    sound files must be placed in /var/lib/asterisk/sounds
+exten => 8500998,1,Answer
+exten => 8500998,2,AGI(agi-dtmf.agi)
+exten => 8500998,3,Hangup
+
+
+; Asterisk internal ZapBarge extensions 
+;   they are long so no one dials them accidentally
+exten => 8612001,1,ZapBarge(1)
+exten => 8612002,1,ZapBarge(2)
+exten => 8612003,1,ZapBarge(3)
+exten => 8612004,1,ZapBarge(4)
+exten => 8612005,1,ZapBarge(5)
+exten => 8612006,1,ZapBarge(6)
+exten => 8612007,1,ZapBarge(7)
+exten => 8612008,1,ZapBarge(8)
+exten => 8612009,1,ZapBarge(9)
+exten => 8612010,1,ZapBarge(10)
+...
+
+
+; Asterisk internal conference calling meetme extensions
+;   they are long so no one dials them accidentally
+;   don't forget to populate the conferences table in the "asterisk" DB with
+;   these extensions or conferencing won't work:
+;     INSERT INTO conferences values('8600011','10.10.11.12',''); and so on...
+exten => 8600011,1,Meetme,8600011|q
+exten => 8600012,1,Meetme,8600012|q
+exten => 8600013,1,Meetme,8600013|q
+exten => 8600014,1,Meetme,8600014|q
+exten => 8600015,1,Meetme,8600015|q
+exten => 8600016,1,Meetme,8600016|q
+exten => 8600017,1,Meetme,8600017|q
+exten => 8600018,1,Meetme,8600018|q
+exten => 8600019,1,Meetme,8600019|q
+exten => 8600020,1,Meetme,8600020|q
+exten => 8600021,1,Meetme,8600021|q
+exten => 8600022,1,Meetme,8600022|q
+exten => 8600023,1,Meetme,8600023|q
+exten => 8600024,1,Meetme,8600024|q
+exten => 8600025,1,Meetme,8600025|q
+exten => 8600026,1,Meetme,8600026|q
+exten => 8600027,1,Meetme,8600027|q
+exten => 8600028,1,Meetme,8600028|q
+exten => 8600029,1,Meetme,8600029|q
+exten => 8600030,1,Meetme,8600030|q
+
+
+
+#### for optional call logging through AGI add the following line to all incoming and outgoing extensions:
+
+;outbound dialing:
+exten => _91NXXNXXXXXX,1,AGI(call_log.agi,${EXTEN})
+
+;inbound calls:
+exten => 101,1,AGI(call_log.agi,${EXTEN})
+
+;all hangups:
+exten => h,1,AGI(call_log.agi,${EXTEN})
+
+---------------------------
+meetme.conf
+---------------------------
+
+conf => 8600011
+conf => 8600012
+conf => 8600013
+conf => 8600014
+conf => 8600015
+conf => 8600016
+conf => 8600017
+conf => 8600018
+conf => 8600019
+conf => 8600020
+conf => 8600021
+conf => 8600022
+conf => 8600023
+conf => 8600024
+conf => 8600025
+conf => 8600026
+conf => 8600027
+conf => 8600028
+conf => 8600029
+conf => 8600030
+
+
+
+
+
+######## VICIDIAL REQUIREMENTS ##########
+
+---------------------------
+extensions.conf
+---------------------------
+
+; you must add these meetme rooms for VICIDIAL to work
+
+exten => 8600051,1,Meetme,8600051
+exten => 8600052,1,Meetme,8600052
+exten => 8600053,1,Meetme,8600053
+exten => 8600054,1,Meetme,8600054
+exten => 8600055,1,Meetme,8600055
+exten => 8600056,1,Meetme,8600056
+exten => 8600057,1,Meetme,8600057
+exten => 8600058,1,Meetme,8600058
+exten => 8600059,1,Meetme,8600059
+exten => 8600060,1,Meetme,8600060
+exten => 8600061,1,Meetme,8600061
+exten => 8600062,1,Meetme,8600062
+exten => 8600063,1,Meetme,8600063
+exten => 8600064,1,Meetme,8600064
+exten => 8600065,1,Meetme,8600065
+exten => 8600066,1,Meetme,8600066
+exten => 8600067,1,Meetme,8600067
+exten => 8600068,1,Meetme,8600068
+exten => 8600069,1,Meetme,8600069
+exten => 8600070,1,Meetme,8600070
+exten => 8600071,1,Meetme,8600071
+exten => 8600072,1,Meetme,8600072
+exten => 8600073,1,Meetme,8600073
+exten => 8600074,1,Meetme,8600074
+exten => 8600075,1,Meetme,8600075
+exten => 8600076,1,Meetme,8600076
+exten => 8600077,1,Meetme,8600077
+exten => 8600078,1,Meetme,8600078
+exten => 8600079,1,Meetme,8600079
+exten => 8600080,1,Meetme,8600080
+exten => 8600081,1,Meetme,8600081
+exten => 8600082,1,Meetme,8600082
+exten => 8600083,1,Meetme,8600083
+exten => 8600084,1,Meetme,8600084
+exten => 8600085,1,Meetme,8600085
+exten => 8600086,1,Meetme,8600086
+exten => 8600087,1,Meetme,8600087
+exten => 8600088,1,Meetme,8600088
+exten => 8600089,1,Meetme,8600089
+exten => 8600090,1,Meetme,8600090
+exten => 8600091,1,Meetme,8600091
+exten => 8600092,1,Meetme,8600092
+exten => 8600093,1,Meetme,8600093
+exten => 8600094,1,Meetme,8600094
+exten => 8600095,1,Meetme,8600095
+exten => 8600096,1,Meetme,8600096
+exten => 8600097,1,Meetme,8600097
+exten => 8600098,1,Meetme,8600098
+exten => 8600099,1,Meetme,8600099
+exten => 8600100,1,Meetme,8600100
+
+; these are for silent entry into meetme rooms for VICIDIAL
+
+exten => 78600051,1,Meetme,8600051|q
+exten => 78600052,1,Meetme,8600052|q
+exten => 78600053,1,Meetme,8600053|q
+exten => 78600054,1,Meetme,8600054|q
+exten => 78600055,1,Meetme,8600055|q
+exten => 78600056,1,Meetme,8600056|q
+exten => 78600057,1,Meetme,8600057|q
+exten => 78600058,1,Meetme,8600058|q
+exten => 78600059,1,Meetme,8600059|q
+exten => 78600060,1,Meetme,8600060|q
+exten => 78600061,1,Meetme,8600061|q
+exten => 78600062,1,Meetme,8600062|q
+exten => 78600063,1,Meetme,8600063|q
+exten => 78600064,1,Meetme,8600064|q
+exten => 78600065,1,Meetme,8600065|q
+exten => 78600066,1,Meetme,8600066|q
+exten => 78600067,1,Meetme,8600067|q
+exten => 78600068,1,Meetme,8600068|q
+exten => 78600069,1,Meetme,8600069|q
+exten => 78600070,1,Meetme,8600070|q
+exten => 78600071,1,Meetme,8600071|q
+exten => 78600072,1,Meetme,8600072|q
+exten => 78600073,1,Meetme,8600073|q
+exten => 78600074,1,Meetme,8600074|q
+exten => 78600075,1,Meetme,8600075|q
+exten => 78600076,1,Meetme,8600076|q
+exten => 78600077,1,Meetme,8600077|q
+exten => 78600078,1,Meetme,8600078|q
+exten => 78600079,1,Meetme,8600079|q
+exten => 78600080,1,Meetme,8600080|q
+exten => 78600081,1,Meetme,8600081|q
+exten => 78600082,1,Meetme,8600082|q
+exten => 78600083,1,Meetme,8600083|q
+exten => 78600084,1,Meetme,8600084|q
+exten => 78600085,1,Meetme,8600085|q
+exten => 78600086,1,Meetme,8600086|q
+exten => 78600087,1,Meetme,8600087|q
+exten => 78600088,1,Meetme,8600088|q
+exten => 78600089,1,Meetme,8600089|q
+exten => 78600090,1,Meetme,8600090|q
+exten => 78600091,1,Meetme,8600091|q
+exten => 78600092,1,Meetme,8600092|q
+exten => 78600093,1,Meetme,8600093|q
+exten => 78600094,1,Meetme,8600094|q
+exten => 78600095,1,Meetme,8600095|q
+exten => 78600096,1,Meetme,8600096|q
+exten => 78600097,1,Meetme,8600097|q
+exten => 78600098,1,Meetme,8600098|q
+exten => 78600099,1,Meetme,8600099|q
+exten => 78600100,1,Meetme,8600100|q
+
+
+---------------------------
+meetme.conf
+---------------------------
+conf => 8600051
+conf => 8600052
+conf => 8600053
+conf => 8600054
+conf => 8600055
+conf => 8600056
+conf => 8600057
+conf => 8600058
+conf => 8600059
+conf => 8600060
+conf => 8600061
+conf => 8600062
+conf => 8600063
+conf => 8600064
+conf => 8600065
+conf => 8600066
+conf => 8600067
+conf => 8600068
+conf => 8600069
+conf => 8600070
+conf => 8600071
+conf => 8600072
+conf => 8600073
+conf => 8600074
+conf => 8600075
+conf => 8600076
+conf => 8600077
+conf => 8600078
+conf => 8600079
+conf => 8600080
+conf => 8600081
+conf => 8600082
+conf => 8600083
+conf => 8600084
+conf => 8600085
+conf => 8600086
+conf => 8600087
+conf => 8600088
+conf => 8600089
+conf => 8600090
+conf => 8600091
+conf => 8600092
+conf => 8600093
+conf => 8600094
+conf => 8600095
+conf => 8600096
+conf => 8600097
+conf => 8600098
+conf => 8600099
+conf => 8600100
