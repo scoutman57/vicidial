@@ -1,0 +1,42 @@
++------------------------------------------------------------------------------+
+|                          Asterisk GUI client - TODO                          |
++------------------------------------------------------------------------------+
+
+1.	LOW	We are toying with the idea of adding a "Hijack" feature that would allow you to take any channel from whoever they are talking to and direct it to your phone, but we're not sure that's such a good idea. 
+
+2.	LOW	We are also looking at adding a separate operator-specific GUI app to allow for better extension monitoring and transferring options that operators require. 
+
+3.	LOW	We are also looking at creating an inbound-agent-specific GUI that would ideally work with Asterisk queues but that is not very likely given the current lack of events being given off by queues
+
+4.	LOW	Making the server install script a customizable with installer prompts
+
+5.	MEDIUM	Doing load testing to make a better AST_update script. One that would handle manager lockups and blank responses better.
+
+6.	LOW	clean up the LEADLOADER code a bit and fix the running processing totals.
+
+7.	LOW	Create guidelines and suggestions for deactivating unused modules from Asterisk for astGUIclient users
+
+8.	DONE	Find out how an outbound agent in VICIDIAL can have more than one entry in the vicidial_live_agents table. It doesn't seem to affect operations that much, but it's still a bug
+
+9.	LOW	Revisit possibility of using something other than CallerID to tag a call process, probably a long shot without altering the Asterisk code, but that may be an option.
+
+10.	MEDIUM	Run some lab-style load tests on VICIDIAL and show recommended configurations as well as "highest recommended" settings
+
+11.	DONE	Add IAX trunks compatibility to the suite
+
+12.	MEDIUM	Add IAX clients compatibility, this may be tricky because trunks and clients show up in exactly the same way on the "show channels" command, I may have to create a listing of client logins that would be checked against at every update to make sure it wasn't a client that was showing up in the live_channels table instead of showing up in the live_sip_channels table.
+
+13.	MEDIUM	Add Zap clients compatibility, this may be easier after doing the IAX clients feature, there are many of the same issues to work through, but it should be somewhat easier for Zap.
+
+14.	DONE	Fix the "closeout-login-logout after switch from auto dial to manual dial in VICIDIAL" bug
+
+15.	MEDIUM	Now that the Asterisk CVS version always sends CallerID and CallerIDname separately, it could be possible to have a definable calleridnumber per campaign, the callerID name sent will still be screwed up, but it is a step in the right direction. We will not do this right away because it is a new development(in October 2004) within Asterisk and it would break older installs to enable it. We will wait until the installed user-base is further along before developing this option.
+
+16.	HIGH	Change the VICIDIAL_IN_LEADS script to run with Net::MySQL and the AST_SERVER config file
+
+17.	LOW	Figure out how random VDautodial dies occur 2004-10-26 18:24:00 
+
+18.	MEDIUM	add callback status with date and time definition to VICIDIAL. Need to figure out the best way to do this, an early attempt at this ended badly with most of the appointments being forgotten or discarded because the agent did not log in that day or during the time window.
+
+
+
