@@ -1,0 +1,77 @@
++------------------------------------------------------------------------------+
+|                          Asterisk GUI client - TODO                          |
++------------------------------------------------------------------------------+
+
+-	DONE	Add instructions to SCRATCH_INSTALL on how to have VICIDIAL call you(outside number) as the agent upon web login
+
+-	DONE	add keyboard-key-function binding to vicidial.php hangup and:(1 for AnsMachine, 2 for NoAnswer, 3 for NotInterested, etc...). custom configurable by campaign HOTKEYS
+
+-	DONE	Add callerID number field to asterisk.phones table for web agc
+		Add campaign callerID for outbound in vdc 3rd party
+
+-	DONE	Add webserverroot to dbconnect.php file
+
+-	DONE	Add write-only-webserver value to web pages to not write auth and changes to file
+
+-	DONE	Add pull-down menu of active campaigns for VICIDIAL web-client login.
+
+-	DONE	Allow VICIDIAL manual dial agents to call alt_phone number or address3 as phone number at click of button after trying th main number. They click on FINISH to disposition the lead
+
+-	DONE	Internationalization of languages on web pages framework and first basic rough translations
+
+
+-	HIGH	Add ability to record every call in a campaign, also naming by campaign, there would be a change in filenames. This would be added to campaigns table as ALLCALLS/ONDEMAND/NEVER options(default to ONDEMAND). Recording would be initiated by web-client app. admins can set the filename scheme and codec type(by selecting the campaign_rec_exten) in the campaign modification screen. Feature not available in perl/Tk app.
+
+-	HIGH	Add vicidial_agent_log table with calculations of idle time between calls and time to dispo calls for more reports. The vicidial_user_log table would have some fields added to it to hold the cumulative total of seconds per session for each of the following activities(PAUSED TIME, DISPO TIME, WAIT TIME, CALL TIME) to be used for stat analysis later. the vicidial_agent_log is a recent snapshot log that has older information cleared out daily to keep it fast. In this log will be an entry for every instance of agent wait time, pause time, dispo time and call time to be used for reports and potentially in a more sophisticated predictive dialing algorithm in the future.
+
+
+-	MEDIUM	Add favorites extensions list to astGUIclient web client that would allow users to select favorite extensions and view their state on a side frame or even in a simplified narrow window that would show the statuses of extensions and allow dialing them by clicking on them.
+
+-	MEDIUM	Add agent script screen tab for VICIDIAL. This also requires adding an extra HELP set of instructions to guide managers in entering the script correctly. When the call comes up, the screen would go to the Script layer automatically(configurable in campaign screen) with variables filled in with Database values and allow toggling back and forth to the dialer screen
+
+-	MEDIUM	Add Answering machine message button for agent to click on to leave message on call after the machine beep
+
+-	MEDIUM	rebuild the vdremote.php remote agents pages to use AJAX(PHP/Javascript/XMLHTTPRequest) for real-time popups of call data.
+
+-	MEDIUM	Add non-global vars to admin.php pages and other scripts
+
+-	MEDIUM	allow custom welcome message for vicidial campaigns.
+
+-	MEDIUM	add callback status with date and time definition to VICIDIAL. Need to figure out the best way to do this, an early attempt at this ended badly with most of the appointments being forgotten or discarded because the agent did not log in that day or during the time window. One thing I think we've settled on is to allow CALLBACKs for any status of disposition and just stick them in a separate table. We would also probably set up email reminders for them as well as some kind of popup window reminders no matter what campaign they were in. We're getting closer, but this is going to take a lot of testing before it becomes a reality.
+
+-	MEDIUM	add a count-up-timer to active channels on the astguiclient MAIN screen(this may be an Asterisk 1.2 required feature).
+
+-	MEDIUM	Change VICIDIAL configuration to allow dialing of alt_phone numbers as well as address3 phone numbers after dialing main number. Best way for this may be to reconfigure the called_since_last_reset field to allow N, 1, 2, Y. This would require reprogramming several server scripts and php pages.
+
+-	MEDIUM	Try a few of the frequently launched scripts as C programs(call_log.agi and the AST_send child scripts) to see if they reduce system load and/or speed up those processes.
+
+-	MEDIUM	Change the system around to allow for more efficient clustering of servers where a call coming in(or going out) to one server could be sent to an agent on another server that is on the same campaign automatically if there are no agents available on the source server.
+
+-	MEDIUM	Add method of picking up astGUIclient parked calls by only dialing digits on a regular extension without using the astGUIclient.
+
+-	MEDIUM	per-campaign customer SQL query selections, like city and phone prefixes
+
+-	MEDIUM	end-user documentation, room manager documentation as well as troubleshooting guide
+
+-	MEDIUM	Run some lab-style load tests on VICIDIAL and show recommended configurations as well as "highest recommended" settings
+
+-	MEDIUM	add a way of checking that there is no more than 1 channel in the meetme room with the agent before another call to that agent. Currently this happens less than 0.1% of the time(mostly on heavily loaded systems), but another check might change that to zero.
+
+-	MEDIUM	add Answering machine detection ability. This may involve some code changes to Asterisk but with the addition of some new subroutines to the dsp.c file it may be possible to develop some equations to detect answering machines without significantly effecting processor load. We figured out that for outbound campaigns it seems that putting a dial_timeout of between 24-30 seconds seems to remove upto 95% of the answering machines from being transferred to agents with no additional delay in answered calls being sent to agenst, which seems much preferrable to many answering machine detection methods out there.
+
+-	LOW	We are also looking at adding a separate operator-specific GUI app to allow for better extension monitoring and transferring options that operators require. the web agc client is close to this goal.
+
+-	LOW	We are also looking at creating an inbound-agent-specific GUI that would ideally work with Asterisk queues but that is not very likely given the current lack of events being given off by queues(this is much less likely to be built now that VICIDIAL takes inbound calls)
+
+-	LOW	Making the server install script a customizable with installer prompts
+
+-	LOW	clean up the GUI LEADLOADER code a bit and fix the running processing totals.
+
+-	LOW	Create guidelines and suggestions for deactivating unused modules from Asterisk for astGUIclient users
+
+-	LOW	Revisit possibility of using something other than CallerID to tag a call process, probably a long shot without altering the Asterisk code, but that may be an option.
+
+-	ON-HOLD	Localization of each server based on Intl. dial codes and/or country codes. very difficult to do this based on dial-codes, if used in other country, best to not use the adjust_gmt script.
+
+-	ON-HOLD	(awaiting more information from the affected person)Track the reason for calls that are not entered into call_log when they are initiated as well as calls that are not run through the 'h' exten upon hangup and therefore do not get run through call_log.agi on hangup. This results in problems for AST_VDauto_dial.pl in that it cannot tell that a call is still live and has to wait until the timeout(2 minutes) for that call before removing it from the vicidial_auto_calls table. The plan is to grab the timeout set for the call, add 5 seconds to it and do a check on the channel that the call was placed over in live_channels and live_sip_channels to see if it is live. If not it would be deleted from vicidial_auto_calls. We have found that one cause of this is impossible phone numbers or other numbers that do not fit the dialplan, like areacodes in the US that begin with 1 or have 0 or 1 as the 4th digit(which is not allowed). These calls never go to call_log so their vicidial_auto_calls record never gets updated on hangup.
+
