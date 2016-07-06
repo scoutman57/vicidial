@@ -1,0 +1,59 @@
++------------------------------------------------------------------------------+
+|                          Asterisk GUI client - TODO                          |
++------------------------------------------------------------------------------+
+
+-	DONE	Add IAX clients compatibility, this may be tricky because trunks and clients show up in exactly the same way on the "show channels" command, I may have to create a listing of client logins that would be checked against at every update to make sure it wasn't a client that was showing up in the live_channels table instead of showing up in the live_sip_channels table. Adding this feature will result in changing code in almost every script in the suite.
+
+-	DONE	Add Zap clients compatibility, this may be easier after doing the IAX clients feature, there are many of the same issues to work through, but it should be somewhat easier for Zap.
+
+-	DONE	add ability to set MySQL connection port across all server and client apps
+
+-	DONE	change the client CONF files to only MYSQL connection, server IP, SIP_user and the web query strings, moving all other variables to the MySQL server. This would allow all setting of additional variables within the web admin pages. Also, we will create SELECT-only logins that the clients will use to get their functional MySQL logins, removing another security issue by not having potentially destructive MySQL login info available in plain text to the client app user.
+
+-	DONE	add a timeout for the meetme rooms(non-vicidial) or at least a validator that would run every minute or so to see if anyone was actually in the meetme room anymore, and if not, it would reset the conferences table record for that room so it can be used again.
+
+-	DONE	add a dial timeout field to vicidial_campaigns to allow for custom specifications of dial timeout on the fly per campaign across all servers. This is a big help to those doing campaigns with significant numbers of Answwering machines. Setting the dial_timeout field to 21-24 seconds greatly reduces the number of answering machines and voicemail sent to agents, and using the Timeout: field in the manager Originate Action has proven to work very well and can override the dial timeout set in the extensions.conf file if it is less.
+
+-	DONE	add a dial prefix field to vicidial_campaigns to allow for different dialout methods per campaign across all servers.
+
+-	DONE	Add a new method of remote agents for VICIDIAL that would allow for an agent to specify multiple lines and extended dial numbers. This is ideal for people working from home or agents that are on the road or after hours. There will also be a specific web page for them to log into where they can change the phone number their calls go to as well as the number of lines and whether it is active or not.
+
+-	DONE	documentation for the admin pages in the form of a help button next to each field, and some more descriptive error messages if there is a problem.
+
+-	MEDIUM	add a vicidial_campaign_statuses table that would contain campaign-specific statuses, and associated web admin page for adding/editing/deleting campaign-statuses.
+
+-	MEDIUM	look into doing an all-HTML-php implementation of astGUIclient and VICIDIAL using PHP and SAJAX(with Javascript) to do realtime web page updating. This would free users from having to have anything but a web browser installed and would help sysadmins as well. It would also open up several new options for users.
+
+-	MEDIUM	add callback status with date and time definition to VICIDIAL. Need to figure out the best way to do this, an early attempt at this ended badly with most of the appointments being forgotten or discarded because the agent did not log in that day or during the time window.
+
+-	MEDIUM	end-user documentation, room manager documentation, admin documentation as well as troubleshooting guide
+
+-	MEDIUM	Run some lab-style load tests on VICIDIAL and show recommended configurations as well as "highest recommended" settings
+
+-	MEDIUM	Now that the Asterisk CVS version always sends CallerID and CallerIDname separately, it could be possible to have a definable calleridnumber per campaign, the callerID name sent will still be screwed up, but it is a step in the right direction. We will not do this right away because it is a new development(in October 2004) within Asterisk and it would break older installs to enable it. We will wait until the installed user-base is further along before developing this option.
+
+-	MEDIUM	Doing load testing to make a better AST_update script. One that would handle manager lockups and blank responses better.
+
+-	MEDIUM	add a way of checking that there is no more than 1 channel in the meetme room with the agent before another call to that agent. Currently this happens less than 0.1% of the time(mostly on heavily loaded systems), but another check might change that to zero.
+
+-	MEDIUM	add a "maximum VDAD outbound channels" to the AST_SERVER_conf.pl file that would prevent VDautodial from trying to dial more lines that the server has capacity.
+
+-	MEDIUM	add Answering machine detection ability. This may involve some code changes to Asterisk but with the addition of some new subroutines to the dsp.c file it may be porrible to develop some equations to detect answering machines without significantly effecting processor load.
+
+-	LOW	alter VICIDIAL client and all autodial scripts so that when a call is transferred to closer that the status of that call in the vicidial_auto_calls table is changed to CLOSER so that more dials can be made while closer is still on the call(There are several problems with implementing this especially on fixed line systems).
+
+-	LOW	in astGUIclient add a "send to voicemail" button on the popup for incoming calls.
+
+-	LOW	We are also looking at adding a separate operator-specific GUI app to allow for better extension monitoring and transferring options that operators require. 
+
+-	LOW	We are also looking at creating an inbound-agent-specific GUI that would ideally work with Asterisk queues but that is not very likely given the current lack of events being given off by queues(this is much less likely to be built now that VICIDIAL takes inbound calls)
+
+-	LOW	Making the server install script a customizable with installer prompts
+
+-	LOW	clean up the LEADLOADER code a bit and fix the running processing totals.
+
+-	LOW	Create guidelines and suggestions for deactivating unused modules from Asterisk for astGUIclient users
+
+-	LOW	Revisit possibility of using something other than CallerID to tag a call process, probably a long shot without altering the Asterisk code, but that may be an option.
+
+
